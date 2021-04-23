@@ -7,11 +7,21 @@ User = settings.AUTH_USER_MODEL
 class Problem(models.Model):
     ALG_CHOICES = (
         ('b', '基础'),
-        ('g', '贪心算法')
+        ('g', '贪心算法'),
+        ('f', 'DFS/BFS'),
+        ('x', '动态规划'),
+        ('t', '二分法'),
+        ('d', '最短路径算法')
     )
     DS_CHOICES = (
         ('b', '基础'),
-        ('a', '数组')
+        ('a', '数组'),
+        ('l', '链表'),
+        ('s', '栈'),
+        ('q', '队列'),
+        ('h', '哈希表'),
+        ('t', '树'),
+        ('p', '图')
     )
 
     id = models.IntegerField(verbose_name='题号', primary_key=True)
