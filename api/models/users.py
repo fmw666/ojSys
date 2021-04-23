@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractUser
 from itsdangerous import TimedJSONWebSignatureSerializer as TJWSSerializer, BadData
 from django.conf import settings
 
+from .problem import Problem
+
 
 class User(AbstractUser):
     # CompetitionOrganizers
@@ -16,7 +18,7 @@ class User(AbstractUser):
     class Meta:
         app_label = 'api'
         # db_table = 'tb_users'
-        verbose_name = '用户'
+        verbose_name = '用户大类（user）'
         verbose_name_plural = verbose_name
 
     def generate_email_verify_url(self):
@@ -57,8 +59,26 @@ class CompetitionOrganizer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     email = models.EmailField()
 
+    class Meta:
+        verbose_name = '竞赛发布者（user）'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.user.username
+
 
 # 普通用户
-# class Participant(models.Model):
-#     solved_problems = models.ForeignKey
+class Participant(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, default='')
+
+    solved_problems = models.ForeignKey(Problem, verbose_name='已解决的题', on_delete=models.DO_NOTHING, related_name='已解决的题', null=True, blank=True)
+
+    # finished_contexts = models.ForeignKey(Context, verbose_name='已参与的竞赛', on_delete=models.DO_NOTHING, related_name='已参与的竞赛')
+
+    class Meta:
+        verbose_name = '普通用户（user）'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.user.username
 
