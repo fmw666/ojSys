@@ -185,6 +185,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ],
+
+    # 分页
+    'DEFAULT_PAGINATION_CLASS': 'server.utils.pagination.StandardResultsSetPagination',
 }
 
 AUTH_USER_MODEL = 'api.User'

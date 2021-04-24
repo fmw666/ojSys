@@ -23,7 +23,7 @@ const routes = [
     component: Problems
   },
   {
-    path: '/problems/1',
+    path: '/problems/:id',
     name: 'Problem',
     component: ProblemPage
   },

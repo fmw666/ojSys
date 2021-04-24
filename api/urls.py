@@ -25,7 +25,11 @@ urlpatterns = [
     url(r'^judge/$', judge.JudgeView.as_view()),
 
     # 获取例题列表
-    url(r'^problems/$', problem.ProblemsView.as_view()),
+    url(r'^problems/$', problem.ProblemListView.as_view()),
+    # 查询例题
+    # url(r'^problems/(?P<p_id>\d+)', problem.ProblemListView.as_view()),
+    # 查询单道例题
+    url(r'^problems/(?P<pid>\d+)$', problem.ProblemView.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

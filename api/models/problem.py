@@ -23,6 +23,13 @@ class Problem(models.Model):
         ('t', '树'),
         ('p', '图')
     )
+    HEADER_CHOICES = (
+        ('a', '入门'),
+        ('b', '简单'),
+        ('c', '中等'),
+        ('d', '困难'),
+        ('e', '特难')
+    )
 
     id = models.IntegerField(verbose_name='题号', primary_key=True)
     name = models.CharField(verbose_name='题目名称', max_length=100)
@@ -30,6 +37,8 @@ class Problem(models.Model):
 
     alg_type = models.CharField(verbose_name='算法类型', max_length=1, choices=ALG_CHOICES, default='b')
     ds_type = models.CharField(verbose_name='数据结构类型', max_length=1, choices=DS_CHOICES, default='b')
+
+    header = models.CharField(verbose_name='难度', max_length=1, choices=HEADER_CHOICES, default='a')
 
     author = models.ForeignKey(User, verbose_name='题目作者', on_delete=models.DO_NOTHING, related_name='题目作者')
     inputs = models.TextField(verbose_name='题目输入流', null=True, blank=True)
