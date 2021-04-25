@@ -22,7 +22,7 @@ export default {
 
   },
   created: function(){
-    this.$axios.get('http://127.0.0.1:8000/api/v1/emails/verification/'+ document.location.search)
+    this.$axios.get(this.$host + '/api/v1/emails/verification/'+ document.location.search)
        .then(response => {
            this.success = true;
        })

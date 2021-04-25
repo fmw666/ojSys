@@ -46,7 +46,7 @@ export default {
   mounted() {
     // 判断用户登录状态
     if (this.user_id && this.token) {
-      this.$axios.get("http://127.0.0.1:8000/api/v1/user/", {
+      this.$axios.get(this.$host + "/api/v1/user/", {
         // 向后端传递 JWT token 的方法
         headers: {
           'Authorization': 'JWT ' + this.token
@@ -84,7 +84,7 @@ export default {
         this.email_error = true;
         return;
       }
-      this.$axios.put('http://127.0.0.1:8000/api/v1/email/', {
+      this.$axios.put(this.$host + '/api/v1/email/', {
         email: this.email
       }, {
         headers: {

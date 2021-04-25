@@ -92,7 +92,7 @@ export default {
       }
       // 检查重名
       if (this.error_name === false) {
-        this.$axios.get("http://127.0.0.1:8000/api/v1/users/username/" + this.username + '/count/', {
+        this.$axios.get(this.$host + "/api/v1/users/username/" + this.username + '/count/', {
           responseType: 'json'
         })
           .then(response => {
@@ -135,7 +135,7 @@ export default {
         this.error_phone = true;
       }
       if (this.error_phone === false) {
-        this.$axios.get("http://127.0.0.1:8000/api/v1/users/mobile/" + this.mobile + '/count/', {
+        this.$axios.get(this.$host + "/api/v1/users/mobile/" + this.mobile + '/count/', {
           responseType: 'json'
         })
           .then(response => {
@@ -177,7 +177,7 @@ export default {
 
       if (this.error_name===false && this.error_password===false && this.error_check_password===false
         && this.error_phone===false && this.error_sms_code===false && this.error_allow===false) {
-        this.$axios.post("http://127.0.0.1:8000/api/v1/users/", {
+        this.$axios.post(this.$host + "/api/v1/users/", {
           username: this.username,
           password: this.password,
           mobile: this.mobile,
@@ -211,7 +211,7 @@ export default {
       this.check_phone();
 
       // 向后端发送请求
-      this.$axios.get('http://127.0.0.1:8000/api/v1' + '/sms_codes/' + this.mobile + '/', {
+      this.$axios.get(this.$host + '/api/v1' + '/sms_codes/' + this.mobile + '/', {
         responseType: 'json'
       }).then(response => {
         // 发送成功

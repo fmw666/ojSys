@@ -1,26 +1,72 @@
 <template>
 <div>
 
-  题目
-  {{message}}
-  <textarea ref="textarea" v-model="code" style="resize: none" rows="40" cols="80" ></textarea>
-  <el-button @click="execute">运行</el-button>
-  <span>运行结果：{{msg}}</span>
+  <el-drawer
+    v-bind:title="title"
+    v-model="drawer"
+    :direction="direction"
+    :modal="false"
+    :size="'30%'"
+    :close-on-press-escape="true"
+    :before-close="handleClose" destroy-on-close>
+
+    <div style="margin-left: 20px">
+      <span>难度：{{header}}</span>
+      <br><br>
+      <span>算法类型：{{alg_type}}</span>
+      &emsp;&emsp;
+      <span>数据结构：{{ds_type}}</span>
+      <br><br>
+      <h3>描述</h3>
+      <span v-html="message"></span>
+      <br><br>
+      <el-button>上一题</el-button>
+      <el-button>下一题</el-button>
+    </div>
+  </el-drawer>
+
+
+  <div style="width: 68%; float: right">
+    <el-button @click="drawer = true" type="" style="margin-left: 16px;">
+      题目详情
+    </el-button>
+    <br>
+    <textarea ref="textarea" v-model="code" style="resize: none" rows="40" cols="80" autofocus></textarea>
+
+    <br><br>
+    <el-button @click="execute">运行</el-button>
+    <span>&emsp;&emsp;运行结果：{{msg}}</span>
+  </div>
 </div>
 </template>
 
 <script>
-
-export default {
+import { defineComponent } from 'vue'
+import { ElMessage } from 'element-plus'
+export default defineComponent({
   name: "ProblemPage",
   data() {
     return {
-      code: '',
+      code: 'class Solution:\n' +
+          '    """\n' +
+          '    @param a: An integer\n' +
+          '    @param b: An integer\n' +
+          '    @return: The sum of a and b\n' +
+          '    """\n' +
+          '    def aplusb(self, a, b):\n' +
+          '        # write your code here\n' +
+          '\n',
       user_id: sessionStorage.user_id || localStorage.user_id,
       token: sessionStorage.token || localStorage.token,
 
+      is_login: false,
+
+      drawer: true,
+      direction: 'ltr',
+
       pid: '',
       name: '',
+      title: '',
       message: '',
       header: '',
       alg_type: '',
@@ -31,34 +77,104 @@ export default {
     }
   },
   mounted() {
+    this.login_tip(true)
     this.init_data()
+
   },
   methods: {
+    go_login() {
+      this.$router.push('/login?next=/problems/' + this.pid)
+    },
+    login_tip(flag) {
+      // 判断用户登录状态
+      if (this.user_id && this.token) {
+        this.$axios.get(this.$host + "/api/v1/user/", {
+        // 向后端传递 JWT token 的方法
+        headers: {
+          'Authorization': 'JWT ' + this.token
+        },
+        responseType: 'json'
+        }).then(response => {
+          let username = response.data.username
+          if (flag) {
+            this.$message({
+              type: 'success',
+              message: '已登录，欢迎您！' + username
+            });
+          }
+          this.is_login = true
+        }).catch(error => {
+
+        });
+      } else {
+        if (flag) {
+          ElMessage({
+            dangerouslyUseHTMLString: true,
+            message: '未登录，请先 <i><strong>登录</strong></i> &emsp;&emsp;<a @click="go_login" class="tip_login">去登录</a>',
+            duration: 0
+          });
+        }
+        this.is_login = false
+      }
+    },
+    handleClose(done) {
+      done()
+    },
     init_data() {
       this.pid = this.$route.params && this.$route.params.id;
-      this.$axios.get("http://127.0.0.1:8000/api/v1/problems/" + this.pid, {
+      this.$axios.get(this.$host + "/api/v1/problems/" + this.pid, {
           responseType: 'json'
         })
         .then(response => {
-          this.message = response.data['message']
+          this.name = response.data['name']
+          this.message = response.data['message'].replace(/\r\n/g,"<br/>")
+          this.header = response.data['header']
+          this.alg_type = response.data['alg_type']
+          this.ds_type = response.data['ds_type']
+
+          this.title = this.pid + '. ' + this.name
           console.log(response.data)
-      })
+      });
+
     },
     execute() {
-      this.$axios.post("http://127.0.0.1:8000/api/v1/judge/", {
+      this.login_tip(false)
+      if (this.is_login === true) {
+        this.$axios.post(this.$host + "/api/v1/judge/", {
           user_id: this.user_id,
-          id: this.id,
+          id: this.pid,
           code: this.code
         }).then(response => {
           this.result = response.data['code']
           this.msg = response.data['msg']
-          console.log(response.data)
-      })
+        }).catch(error => {
+
+        })
+      } else {
+        this.$confirm('您还未进行登录, 请先登录！', '提示', {
+          confirmButtonText: '去登录',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.go_login()
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消登录'
+          });
+        });
+      }
+    },
+    go_list() {
+      this.$router.push('/problems')
     }
   }
-}
+})
 </script>
 
 <style scoped>
-
+.tip_login {
+  text-underline: black;
+  cursor: pointer;
+}
 </style>

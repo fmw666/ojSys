@@ -76,7 +76,7 @@
         return null
       },
       get_problems() {
-        this.$axios.get("http://127.0.0.1:8000/api/v1/problems/", {
+        this.$axios.get(this.$host + "/api/v1/problems/", {
           params: {
             page: this.page,
             page_size: this.page_size,
