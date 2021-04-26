@@ -1,41 +1,9 @@
 <template>
 <div>
-
-  <el-drawer
-    v-bind:title="title"
-    v-model="drawer"
-    :direction="direction"
-    :modal="false"
-    :size="'30%'"
-    :close-on-press-escape="true"
-    :before-close="handleClose" destroy-on-close>
-
-    <div style="margin-left: 20px">
-      <span>难度：{{header}}</span>
-      <br><br>
-      <span>算法类型：{{alg_type}}</span>
-      &emsp;&emsp;
-      <span>数据结构：{{ds_type}}</span>
-      <br><br>
-      <h3>描述</h3>
-      <span v-html="message"></span>
-      <br><br>
-      <el-button>上一题</el-button>
-      <el-button>下一题</el-button>
-    </div>
-  </el-drawer>
+  <div>
 
 
-  <div style="width: 68%; float: right">
-    <el-button @click="drawer = true" type="" style="margin-left: 16px;">
-      题目详情
-    </el-button>
-    <br>
-    <textarea ref="textarea" v-model="code" style="resize: none" rows="40" cols="80" autofocus></textarea>
-
-    <br><br>
-    <el-button @click="execute">运行</el-button>
-    <span>&emsp;&emsp;运行结果：{{msg}}</span>
+    <el-button>报名参加</el-button>
   </div>
 </div>
 </template>
@@ -44,25 +12,13 @@
 import { defineComponent } from 'vue'
 import { ElMessage } from 'element-plus'
 export default defineComponent({
-  name: "ProblemPage",
+  name: "ContextDetail",
   data() {
     return {
-      code: 'class Solution:\n' +
-          '    """\n' +
-          '    @param a: An integer\n' +
-          '    @param b: An integer\n' +
-          '    @return: The sum of a and b\n' +
-          '    """\n' +
-          '    def aplusb(self, a, b):\n' +
-          '        # write your code here\n' +
-          '\n',
       user_id: sessionStorage.user_id || localStorage.user_id,
       token: sessionStorage.token || localStorage.token,
 
       is_login: false,
-
-      drawer: true,
-      direction: 'ltr',
 
       pid: '',
       name: '',
@@ -72,6 +28,7 @@ export default defineComponent({
       alg_type: '',
       ds_type: '',
 
+      compiler_version: '',
       result: '',
       msg: '',
     }
@@ -83,7 +40,7 @@ export default defineComponent({
   },
   methods: {
     go_login() {
-      this.$router.push('/login?next=/problems/' + this.pid)
+      this.$router.push('/login?next=/contexts/' + this.pid)
     },
     login_tip(flag) {
       // 判断用户登录状态
@@ -119,10 +76,11 @@ export default defineComponent({
     },
     handleClose(done) {
       done()
+      document.getElementById('code_input').focus()
     },
     init_data() {
-      this.pid = this.$route.params && this.$route.params.id;
-      this.$axios.get(this.$host + "/api/v1/problems/" + this.pid, {
+      this.cid = this.$route.params && this.$route.params.id;
+      this.$axios.get(this.$host + "/api/v1/contexts/" + this.cid, {
           responseType: 'json'
         })
         .then(response => {
@@ -132,7 +90,7 @@ export default defineComponent({
           this.alg_type = response.data['alg_type']
           this.ds_type = response.data['ds_type']
 
-          this.title = this.pid + '. ' + this.name
+          this.title = this.cid + '. ' + this.name
           console.log(response.data)
       });
 
@@ -145,8 +103,10 @@ export default defineComponent({
           id: this.pid,
           code: this.code
         }).then(response => {
+          this.compiler_version = response.data['version']
           this.result = response.data['code']
-          this.msg = response.data['msg']
+          this.msg = response.data['output']
+          console.log(response.data)
         }).catch(error => {
 
         })

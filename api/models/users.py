@@ -24,7 +24,7 @@ class User(AbstractUser):
     def generate_email_verify_url(self):
         """生成邮箱激活链接"""
         # 1. 创建加密序列化器
-        serializer = TJWSSerializer(settings.SECRET_KEY, 3600*24)
+        serializer = TJWSSerializer(settings.SECRET_KEY, 3600 * 24)
 
         # 2. 调用 dumps 方法进行加密，bytes
         data = {'user_id': self.id, 'email': self.email}
@@ -33,11 +33,11 @@ class User(AbstractUser):
         # 3. 拼接激活 url
         return 'http://127.0.0.1:3000/verify_email?token=' + token
 
-    @ staticmethod
+    @staticmethod
     def check_verify_email_token(token):
         """对 token 解密并查询对应的 user"""
         # 1. 创建加密序列化器
-        serializer = TJWSSerializer(settings.SECRET_KEY, 3600*24)
+        serializer = TJWSSerializer(settings.SECRET_KEY, 3600 * 24)
         # 2. 用 loads 解密
         try:
             data = serializer.loads(token)
@@ -71,7 +71,8 @@ class CompetitionOrganizer(models.Model):
 class Participant(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, default='')
 
-    solved_problems = models.ForeignKey(Problem, verbose_name='已解决的题', on_delete=models.DO_NOTHING, related_name='已解决的题', null=True, blank=True)
+    solved_problems = models.ForeignKey(Problem, verbose_name='已解决的题', on_delete=models.DO_NOTHING,
+                                        related_name='已解决的题', null=True, blank=True)
 
     # finished_contexts = models.ForeignKey(Context, verbose_name='已参与的竞赛', on_delete=models.DO_NOTHING, related_name='已参与的竞赛')
 
@@ -81,4 +82,3 @@ class Participant(models.Model):
 
     def __str__(self):
         return self.user.username
-

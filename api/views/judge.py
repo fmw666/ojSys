@@ -29,4 +29,4 @@ class JudgeView(APIView):
         async_task = AsyncResult(id=res.id, app=celery_app)
         result = async_task.get()
 
-        return Response({'code': result, 'msg': 'wa'})
+        return Response(result)

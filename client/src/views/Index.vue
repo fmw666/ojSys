@@ -31,6 +31,8 @@
 
 <script>
 
+import {ElMessage} from "element-plus";
+
 export default {
   name: 'Index',
   data() {
@@ -38,9 +40,29 @@ export default {
       username: sessionStorage.username || localStorage.username,
       user_id: sessionStorage.user_id || localStorage.user_id,
       token: sessionStorage.token || localStorage.token,
+
+      problem_count: 0,
     }
   },
   components: {
+  },
+  mounted() {
+    // 判断用户登录状态
+    if (this.user_id && this.token) {
+      this.$axios.get(this.$host + "/api/v1/user/", {
+      // 向后端传递 JWT token 的方法
+      headers: {
+        'Authorization': 'JWT ' + this.token
+      },
+      responseType: 'json'
+      }).then(response => {
+        console.log(response.data)
+      }).catch(error => {
+
+      });
+    } else {
+
+    }
   },
   methods: {
     // 退出登录

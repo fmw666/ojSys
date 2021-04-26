@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models.drf import Article
 from .models.users import CompetitionOrganizer, User, Participant
 from .models.problem import Problem
+from .models.context import Context
 
 
 # Register your models here.
@@ -37,3 +38,8 @@ class ProblemAdmin(admin.ModelAdmin):
     list_display = ['id', 'name', 'header', 'ds_type', 'alg_type', 'author', 'create_date']
     list_filter = ('author', 'header', 'ds_type', 'alg_type')
 
+
+@admin.register(Context)
+class ContextAdmin(admin.ModelAdmin):
+    list_display = ['name', 'author', 'create_date']
+    list_filter = ('author',)

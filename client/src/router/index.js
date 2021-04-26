@@ -1,8 +1,9 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import Index from '../views/Index.vue'
 import Problems from '../views/Problems.vue'
-import ProblemPage from "../views/ProblemPage.vue";
-import Context from '../views/Context.vue'
+import ProblemDetail from "../views/ProblemDetail.vue";
+import ContextDetail from "../views/ContextDetail.vue"
+import Contexts from '../views/Contexts.vue'
 import Login from "../views/Login.vue"
 import Register from "../views/Register.vue"
 import SRegister from "../views/SRegister.vue";
@@ -25,12 +26,17 @@ const routes = [
   {
     path: '/problems/:id',
     name: 'Problem',
-    component: ProblemPage
+    component: ProblemDetail
   },
   {
-    path: '/context',
+    path: '/contexts',
+    name: 'Contexts',
+    component: Contexts
+  },
+  {
+    path: '/contexts/:id',
     name: 'Context',
-    component: Context
+    component: ContextDetail
   },
   {
     path: '/login',

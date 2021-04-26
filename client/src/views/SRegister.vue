@@ -2,12 +2,14 @@
   <div id="poster">
     <div>
       <el-form status-icon label-position="left" label-width="100px" class="login-container">
-        <h3 class="login_title">竞赛发布用户注册</h3>
+        <h3 class="login_title">注册成为机构</h3>
 
-        <el-form-item label="单位名称（企业/学校）" prop="username">
+        <el-form-item label="机构名称" prop="username">
           <el-input type="text" @blur="check_username" v-model="username" autocomplete="off"></el-input>
           <span v-show="error_name" class="error_tip" style="display: block">{{ error_name_message }}</span>
         </el-form-item>
+
+        <el-select>（企业/学校）</el-select>
 
         <el-form-item label="密码" prop="pass">
           <el-input type="password" @blur="check_pwd" v-model="password" autocomplete="off"></el-input>
@@ -19,7 +21,7 @@
           <span v-show="error_check_password" class="error_tip">两次输入的密码不一致</span>
         </el-form-item>
 
-        <el-form-item label="手机号" prop="phone">
+        <el-form-item label="机构联系人手机号" prop="phone">
           <el-input type="tel" @blur="check_phone" v-model="mobile"></el-input>
           <span v-show="error_phone" class="error_tip">{{ error_phone_message }}</span>
         </el-form-item>
