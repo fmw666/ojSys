@@ -1,37 +1,68 @@
 <template>
   <div class="index">
-    <el-container>
-      <el-main>
-        <el-row type="flex" class="row-bg" justify="space-around">
-          <el-col :xs="16" :sm="7">
-            <router-link to="/problems">刷题</router-link>
-          </el-col>
-          <el-col :xs="16" :sm="7">
-            <router-link to="/contexts">竞赛</router-link>
-          </el-col>
-          <el-col :xs="16" :sm="7">
-            <div v-if="username">
-              用户头像，—— {{ username }}
-              <br><router-link to="/account">个人中心</router-link>
-              <el-link type="primary" @click="logout">退出登录</el-link>
-            </div>
-            <div v-else>
-              <router-link to="/login">请登录</router-link>！
-              <router-link to="/register">请注册</router-link>！
-            </div>
-            <br>刷题：3/1923<br>竞赛：0/123
-          </el-col>
-        </el-row>
-        <!--  -->
-        <!-- <el-button type="primary" round>el-button</el-button> -->
-      </el-main>
-    </el-container>
+    <div class="content">
+
+      <div @click="toPath('/problems')" class="card">
+        <div class="shoebox">
+          <img src="../assets/img/题库.png" alt="" />
+        </div>
+        <div class="selector">
+          <h2>Question bank</h2>
+          <div class="shoes-size">
+            题库现有题：
+            <span>560</span>
+          </div>
+          <a href="#" class="by-btn">Let's go</a>
+        </div>
+      </div>
+
+      <div class="card" @click="toPath('/contexts')" style="background-color:rgb(	250,128,114)">
+        <div class="shoebox">
+          <img src="../assets/img/竞赛.png" style="width: 200px" alt="" />
+        </div>
+        <div class="selector">
+          <h2>competition</h2>
+          <div class="shoes-size">
+            举办方：
+            <span>浙江大学、阿里巴巴有限公司等</span>
+          </div>
+          <a href="#" class="by-btn">Let's go</a>
+        </div>
+      </div>
+      <div class="card" style="background-color:rgb(255,215,0)">
+        <div class="shoebox">
+          <img
+            src="../assets/img/个人中心 活动.png"
+            style="width: 200px"
+            alt=""
+          />
+        </div>
+        <div v-if="login_flag" class="selector">
+          <h2>欢迎登陆，{{username}}</h2>
+          <div style="margin: 15px 0">
+            <span class="shoes-size">
+            刷题：
+            <span>{{problem_cnt}} / {{total_problem_cnt}}</span>
+              &emsp;
+            </span>
+            <span class="shoes-size">
+              比赛：
+              <span>{{problem_cnt}} / {{total_problem_cnt}}</span>
+            </span>
+          </div>
+          <a href="#" @click="toPath('/account')" class="by-btn">个人中心</a>
+        </div>
+        <div v-else class="selector">
+          <h2>Personal Center</h2>
+          <a href="#" @click="toPath('/login')" class="by-btn">Sign in</a>
+          <a href="#" @click="toPath('/register')" class="by-btn">Sign up</a>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-
-import {ElMessage} from "element-plus";
 
 export default {
   name: 'Index',
@@ -41,7 +72,9 @@ export default {
       user_id: sessionStorage.user_id || localStorage.user_id,
       token: sessionStorage.token || localStorage.token,
 
-      problem_count: 0,
+      login_flag: false,
+      problem_cnt: 0,
+      total_problem_cnt: 0,
     }
   },
   components: {
@@ -57,11 +90,13 @@ export default {
       responseType: 'json'
       }).then(response => {
         console.log(response.data)
+        this.username = response.data.username
+        this.login_flag = true
       }).catch(error => {
 
       });
     } else {
-
+      this.login_flag = false
     }
   },
   methods: {
@@ -71,24 +106,33 @@ export default {
       localStorage.clear();
       location.href = '/login';
     },
+    // 路由跳转
+    toPath(isPath) {
+      this.$router.push(isPath);
+    },
   }
 }
 </script>
 
-<style>
+<style scoped>
+@import "../assets/css/index.css";
+
+.index {
+  height: 100vh;
+}
 .el-main {
   border: 1px black solid;
   text-align: center; /*让div内部文字居中*/
-	background-color: #fff;
-	border-radius: 20px;
-	width: 80%;
-	height: 400px;
-	margin: auto;
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
+  background-color: #fff;
+  border-radius: 20px;
+  width: 80%;
+  height: 400px;
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .el-row {

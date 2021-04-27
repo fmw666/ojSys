@@ -1,13 +1,14 @@
 <template>
-    <div>
-      <div>
-        <div>算法：</div>
-        <div>数据结构：</div>
-      </div>
+    <div id="problems">
 
-      <br><br>
+      <br><br><br><br><br><br>
 
       <div class="left">
+        <div>
+          <div>算法：</div>
+          <div>数据结构：</div>
+        </div>
+        <br>
         <div class="sort_bar">
           <span v-if="id_sort">
             <a @click="on_sort('-id')" :class="ordering=='id'?'active':''">序号 🔽</a>
@@ -24,23 +25,24 @@
           </span>
         </div>
 
-        <ul class="goods_type_list clearfix">
-          <li v-for="problem in problems">
-            <h4><a @click="enter(problem.id)">{{problem.id}}. {{problem.name}}</a></h4>
-            <span>{{problem.header}}</span>
-            <div>
-              <span>{{problem.alg_type}}</span>
-              <span>{{problem.ds_type}}</span>
-            </div>
-          </li>
-        </ul>
-
         <div class="pagenation">
           <a v-show="previous" @click="on_page(previous)">上一页</a>
           <a v-for="num in page_nums" @click="on_page(num)" :class="num==page?'active':''">{{num}}</a>
           <a v-show="next" @click="on_page(next)">下一页></a>
         </div>
       </div>
+
+      <el-card class="box-card">
+        <div v-for="problem in problems" :key="problem.id" @click="enter(problem.id)" class="items">
+          <h4 style="display: inline">{{ problem.id + ". " + problem.name}}</h4>
+          <span class="header">{{problem.header}}</span>
+          <div class="tips">
+            <span class="tip">算法类型：{{problem.alg_type}}</span>
+            <span class="tip">数据结构：{{problem.ds_type}}</span>
+          </div>
+          <el-divider></el-divider>
+        </div>
+      </el-card>
 
     </div>
 </template>
@@ -173,5 +175,33 @@
   width: 200px;
   height: 100%;
   border: black 1px solid;
+}
+#problems {
+  width: 1142px;
+  margin: 0 auto;
+}
+#problems .box-card {
+  position: relative;
+  top: 100px;
+  box-shadow: rgb(0 0 0 / 17%) 13px 15px 13px 2px;
+}
+.items {
+  cursor: pointer;
+}
+.items :hover {
+  -webkit-box-shadow: #ccc 0px 10px 10px;
+  -moz-box-shadow: #ccc 0px 10px 10px;
+  box-shadow: #ccc 0px 10px 10px;
+}
+.header {
+  margin-left: 30px;
+  font-size: 13px;
+}
+.tips {
+  margin-top: 10px;
+}
+.tip {
+  margin-right: 40px;
+  font-size: 15px;
 }
 </style>
