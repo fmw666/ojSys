@@ -10,7 +10,7 @@
           <h2>Question bank</h2>
           <div class="shoes-size">
             题库现有题：
-            <span>560</span>
+            <span>{{total_problem_cnt}}</span>
           </div>
           <a href="#" class="by-btn">Let's go</a>
         </div>
@@ -47,7 +47,7 @@
             </span>
             <span class="shoes-size">
               比赛：
-              <span>{{problem_cnt}} / {{total_problem_cnt}}</span>
+              <span>{{problem_cnt}} / {{total_context_cnt}}</span>
             </span>
           </div>
           <a href="#" @click="toPath('/account')" class="by-btn">个人中心</a>
@@ -75,11 +75,16 @@ export default {
       login_flag: false,
       problem_cnt: 0,
       total_problem_cnt: 0,
+      total_context_cnt: 0,
     }
   },
   components: {
   },
   mounted() {
+    // 获取题数
+    this.get_problem_cnt()
+    // 获取比赛数
+    this.get_context_cnt()
     // 判断用户登录状态
     if (this.user_id && this.token) {
       this.$axios.get(this.$host + "/api/v1/user/", {
@@ -92,6 +97,12 @@ export default {
         console.log(response.data)
         this.username = response.data.username
         this.login_flag = true
+
+        // 设置值
+        this.problem_cnt = response.data['participant']['solved_problems'].length
+
+        // this.context_cnt = 1
+        // this.total_context_cnt = 2
       }).catch(error => {
 
       });
@@ -110,6 +121,26 @@ export default {
     toPath(isPath) {
       this.$router.push(isPath);
     },
+    // 获取 problem cnt
+    get_problem_cnt() {
+      this.$axios.get(this.$host + "/api/v1/problems/", {
+        responseType: 'json'
+      }).then(response => {
+        this.total_problem_cnt = response.data.count
+      }).catch(error => {
+        console.log(error.response.data)
+      })
+    },
+    // 获取 context cnt
+    get_context_cnt() {
+      this.$axios.get(this.$host + "/api/v1/contexts/", {
+        responseType: 'json'
+      }).then(response => {
+        this.total_context_cnt = response.data.count
+      }).catch(error => {
+        console.log(error.response.data)
+      })
+    }
   }
 }
 </script>

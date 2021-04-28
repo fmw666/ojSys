@@ -31,7 +31,7 @@ export default {
   watch: {
     $route(to, from) {
       // 对路由变化作出响应..
-      if (to.path == "/login" ||this.$route.path == '/login'||this.$route.path =='/register' ||this.$route.path=='/forget'){
+      if (to.path === "/login" || this.$route.path === '/login' || this.$route.path ==='/register' || this.$route.path === '/sregister' || this.$route.path==='/forget'){
         document.querySelector("#nav_bar").style.display = "none";
       } else {
         this.activeIndex = this.$route.path
@@ -50,6 +50,7 @@ export default {
 
 <style scoped>
 #nav_bar {
+  /*display: none !important;*/
   width: 1140px;
   left: 50%;
   transform: translateX(-50%);

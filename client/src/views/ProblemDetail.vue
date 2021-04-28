@@ -47,21 +47,13 @@ export default defineComponent({
   name: "ProblemPage",
   data() {
     return {
-      code: 'class Solution:\n' +
-          '    """\n' +
-          '    @param a: An integer\n' +
-          '    @param b: An integer\n' +
-          '    @return: The sum of a and b\n' +
-          '    """\n' +
-          '    def function(self, a, b):\n' +
-          '        # write your code here\n' +
-          '        ',
+      code: '',
       user_id: sessionStorage.user_id || localStorage.user_id,
       token: sessionStorage.token || localStorage.token,
 
       is_login: false,
 
-      drawer: true,
+      drawer: false,
       direction: 'ltr',
 
       pid: '',
@@ -133,6 +125,7 @@ export default defineComponent({
           this.header = response.data['header']
           this.alg_type = response.data['alg_type']
           this.ds_type = response.data['ds_type']
+          this.code = response.data['init_code']
 
           this.title = this.pid + '. ' + this.name
           console.log(response.data)
@@ -151,6 +144,19 @@ export default defineComponent({
           this.result = response.data['code']
           this.msg = response.data['output']
           console.log(response.data)
+
+          if (this.result === 'ac') {
+            this.$message({
+              type: 'success',
+              message: '运行通过！'
+            });
+            this.msg = 'ac'
+          } else {
+            this.$message({
+              type: 'error',
+              message: '运行失败！请仔细检查您的代码噢~'
+            });
+          }
         }).catch(error => {
 
         })

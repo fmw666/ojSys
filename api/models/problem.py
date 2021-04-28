@@ -30,6 +30,20 @@ class Problem(models.Model):
         ('d', '困难'),
         ('e', '特难')
     )
+    init_str = '''class Solution:
+    """
+    @param a: An integer
+    @param b: An integer
+    @return: The sum of a and b
+    """
+    def function(self, a, b):
+        # write your code here
+        '''
+    test_str = '''
+s = Solution()
+for i in range(len(data_in_lst)):
+    assert s.function(data_in_lst[i]) == data_cor_output_lst[i]
+'''
 
     id = models.IntegerField(verbose_name='题号', primary_key=True)
     name = models.CharField(verbose_name='题目名称', max_length=100)
@@ -41,8 +55,9 @@ class Problem(models.Model):
     header = models.CharField(verbose_name='难度', max_length=1, choices=HEADER_CHOICES, default='a')
 
     author = models.ForeignKey(User, verbose_name='题目作者', on_delete=models.DO_NOTHING, related_name='题目作者')
-    inputs = models.TextField(verbose_name='题目输入流', null=True, blank=True)
-    correct_outs = models.TextField(verbose_name='题目正确输入信息')
+    init_code = models.TextField(verbose_name='题目初始化显示', default=init_str)
+    test_code = models.TextField(verbose_name='题目测试代码文本部分', default=test_str)
+
     create_date = models.DateTimeField(verbose_name='Create Date', auto_now_add=True)
 
     def __str__(self):

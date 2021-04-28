@@ -71,8 +71,7 @@ class CompetitionOrganizer(models.Model):
 class Participant(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, default='')
 
-    solved_problems = models.ForeignKey(Problem, verbose_name='已解决的题', on_delete=models.DO_NOTHING,
-                                        related_name='已解决的题', null=True, blank=True)
+    solved_problems = models.ManyToManyField(Problem, verbose_name='已解决的题', blank=True)
 
     # finished_contexts = models.ForeignKey(Context, verbose_name='已参与的竞赛', on_delete=models.DO_NOTHING, related_name='已参与的竞赛')
 

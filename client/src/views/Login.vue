@@ -1,32 +1,38 @@
 <template>
   <div id="login">
-    <el-form status-icon label-position="left" label-width="100px" class="login-container">
+    <el-form status-icon label-position="left" label-width="105px" class="login-container">
       <h3 class="login_title">用户登录</h3>
 
-      <el-form-item label="用户名或手机号" prop="username">
-        <el-input type="text" @blur="check_username" v-model="username" autocomplete="off"></el-input>
-        <span v-show="error_username" class="error_tip" style="display: block">{{ error_name_message }}</span>
+      <el-form-item label="用户名/手机号" prop="username">
+        <el-input type="text" @change="check_username" v-model="username" autocomplete="off"></el-input>
+        <el-alert v-show="error_username" title="请输入5-20个字符的用户名" type="warning" ></el-alert>
       </el-form-item>
 
       <el-form-item label="密码" prop="pass">
-        <el-input type="password" @blur="check_pwd" v-model="password" autocomplete="off"></el-input>
-        <span v-show="error_pwd" class="error_tip">密码最少8位，最长20位</span>
+        <el-input type="password" @change="check_pwd" v-model="password" autocomplete="off"></el-input>
+        <el-alert v-show="error_password" title="密码最少8位，最长20位" type="warning"></el-alert>
       </el-form-item>
 
       <el-form-item>
         <el-button type="primary" @click="submit">登录</el-button>
-        <el-button>重置</el-button>
+        <el-button @click="reset">重置</el-button>
       </el-form-item>
 
-      <el-row style="text-align: center; margin-top: -10px;;">
-        <router-link to="/forget"><el-link type="primary">忘记密码</el-link></router-link>
-        <router-link to="/register"><el-link type="primary">用户注册</el-link></router-link>
+      <el-row style="margin-top: 5px; position: relative;">
+        <el-link @click="toPath('/forget')" type="primary">忘记密码</el-link>
+        <span class="set_center">&emsp;|&emsp;</span>
+        <el-link @click="toPath('/register')" type="primary">用户注册</el-link>
+        <span class="set_center" style="position: absolute; right: 0">
+          <el-checkbox v-model="remember">记住账户？</el-checkbox>
+        </span>
       </el-row>
     </el-form>
   </div>
 </template>
 
 <script>
+  import {ElMessage} from "element-plus";
+
   export default {
     name: "login",
     data() {
@@ -34,16 +40,36 @@
         username: '',
         password: '',
         error_username: false,
-        error_pwd: false,
+        error_password: false,
         remember: false,
       };
     },
-    methods: {
-      check_username() {
-
+    watch: {
+      username: {
+        handler(old_val, new_val) {
+          const len = this.username.length;
+          if (len > 0) {
+            this.error_username = len < 5 || len > 20;
+          } else if (len === 0) {
+            this.error_username = false
+          }
+        }
       },
-      check_pwd() {
-
+      password: {
+        handler(old_val, new_val) {
+          const len = this.password.length;
+          if (len > 0) {
+            this.error_password = len < 8 || len > 20;
+          } else if (len === 0) {
+            this.error_password = false
+          }
+        }
+      }
+    },
+    methods: {
+      // 路由跳转
+      toPath(isPath) {
+        this.$router.push(isPath);
       },
       get_query_string(name) {
         const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
@@ -54,10 +80,7 @@
         return null;
       },
       submit() {
-        this.check_username();
-        this.check_pwd();
-
-        if (this.error_username === false && this.error_pwd === false) {
+        if (this.error_username === false && this.error_password === false && this.username !== '' && this.password !== '') {
           this.$axios.post(this.$host + "/api-token-auth/", {
             username: this.username,
             password: this.password
@@ -86,7 +109,16 @@
             }
             location.href = return_url
           })
+        } else {
+          ElMessage.error('请检查您的输入');
         }
+      },
+      // 重置表单
+      reset() {
+        this.username = ''
+        this.password = ''
+        this.error_username = false
+        this.error_password = false
       },
     }
   }
@@ -104,7 +136,7 @@
   .login-container {
     border-radius: 15px;
     background-clip: padding-box;
-    margin: 90px auto;
+    margin: 240px auto;
     width: 350px;
     padding: 35px 35px 15px 35px;
     background: #fff;
@@ -113,8 +145,14 @@
   }
 
   .login_title {
-    margin: 0px auto 40px auto;
+    margin: 0 auto 40px auto;
     text-align: center;
     color: #505458;
+  }
+
+  .set_center {
+    vertical-align: middle;
+    height: 30px;
+    line-height: 30px;
   }
 </style>

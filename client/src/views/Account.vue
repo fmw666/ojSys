@@ -24,7 +24,28 @@
           <el-input v-model="ruleForm.phone"></el-input>
         </el-form-item>
         <el-form-item prop="email" label="邮箱：">
-          <el-input v-model="ruleForm.email"></el-input>
+          <div v-if="set_email">
+            <input v-model="email">
+            <input @click="save_email" type="button" name="" value="保 存" />
+            <input @click="set_email = false" type="reset" name="" value="取 消" />
+            <div v-if="email_error">邮箱格式错误</div>
+          </div>
+          <div v-else-if="email">
+            {{ email }}
+            <div v-if="email_active">已验证</div>
+            <div v-else>
+              待验证<input
+                @click="save_email"
+                :disabled="send_email_btn_disabled"
+                type="button"
+                :value="send_email_tip"
+                class="email_tip_btn"
+              />
+            </div>
+          </div>
+          <div v-else>
+            <input @click="set_email = true" type="button" name="" value="设 置" />
+          </div>
         </el-form-item>
       </el-form>
       <div class="isSubmit">
@@ -42,27 +63,7 @@
       手机号：<span>{{ mobile }}</span
       ><br />
       <span>Email：</span>
-      <div v-if="set_email">
-        <input v-model="email" type="email" name="email" />
-        <input @click="save_email" type="button" name="" value="保 存" />
-        <input @click="set_email = false" type="reset" name="" value="取 消" />
-        <div v-if="email_error">邮箱格式错误</div>
-      </div>
-      <div v-else-if="email">
-        {{ email }}
-        <div v-if="email_active">已验证</div>
-        <div v-else>
-          待验证<input
-            @click="save_email"
-            :disabled="send_email_btn_disabled"
-            type="button"
-            :value="send_email_tip"
-          />
-        </div>
-      </div>
-      <div v-else>
-        <input @click="set_email = true" type="button" name="" value="设 置" />
-      </div>
+
     </div>
   </div>
 </template>
@@ -167,6 +168,7 @@ export default {
         this.set_email = false;
         this.send_email_btn_disabled = true;
         this.send_email_tip = '已发送验证邮箱'
+        document.getElementsByClassName('email_tip_btn')
       })
       .catch(error => {
         alert(error.data);
@@ -231,5 +233,28 @@ export default {
 }
 #account .box-card .account_title .el-link {
   width: 100px;
+}
+
+.email_tip_btn {
+  margin-left: 15px;
+  display: inline-block;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #dcdfe6;
+  color: #606266;
+  -webkit-appearance: none;
+  text-align: center;
+  box-sizing: border-box;
+  outline: none;
+  transition: .1s;
+  font-weight: 500;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  padding: 10px 18px;
+  font-size: 14px;
+  border-radius: 4px;
 }
 </style>

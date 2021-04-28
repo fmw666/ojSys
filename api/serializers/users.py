@@ -3,7 +3,7 @@ import re
 from django_redis import get_redis_connection
 from rest_framework_jwt.settings import api_settings
 
-from ..models.users import User
+from ..models.users import User, Participant
 from celery_tasks.email.tasks import send_verify_email
 
 
@@ -44,13 +44,15 @@ class CreateUserSerializer(serializers.ModelSerializer):
             }
         }
 
-    def validate_mobile(self, value):
+    @staticmethod
+    def validate_mobile(value):
         """单独验证手机号"""
         if not re.match(r'1[3-9]\d{9}$', value):
             raise serializers.ValidationError('手机号格式错误')
         return value
 
-    def validated_allow(self, value):
+    @staticmethod
+    def validated_allow(value):
         """是否同意协议"""
         if value != 'true':
             raise serializers.ValidationError('请同意用户协议')
@@ -77,7 +79,11 @@ class CreateUserSerializer(serializers.ModelSerializer):
         user = User(**validated_data)
         # 加密密码
         user.set_password(password)
+        user.is_p = True
         user.save()
+        # 设置为 普通用户
+        participant = Participant(user.id)
+        participant.save()
 
         jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER  # 引用jwt中的叫jwt_payload_handler函数(生成payload)
         jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER  # 函数引用 生成jwt
@@ -90,11 +96,26 @@ class CreateUserSerializer(serializers.ModelSerializer):
         return user
 
 
+class ParticipantDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Participant
+        fields = '__all__'
+
+
 class UserDetailSerializer(serializers.ModelSerializer):
     """用户详情序列化器"""
     class Meta:
         model = User
-        fields = ['id', 'username', 'mobile', 'email', 'email_active']
+        # fields = ['id', 'username', 'mobile', 'email', 'email_active', 'is_ps', 'participant']
+        # fields = '__all__'
+        exclude = ['password']
+
+    # is_ps = serializers.BooleanField(source="is_p")
+    participant = serializers.SerializerMethodField()
+
+    def get_participant(self, obj):
+        participant_data = ParticipantDetailSerializer(obj.participant).data
+        return participant_data
 
 
 class EmailSerializer(serializers.ModelSerializer):

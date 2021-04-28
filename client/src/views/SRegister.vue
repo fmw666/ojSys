@@ -1,7 +1,7 @@
 <template>
   <div id="poster">
-    <div>
-      <el-form status-icon label-position="left" label-width="100px" class="login-container">
+    <div class="center">
+      <el-form status-icon label-position="left" style="width: 400px" label-width="130px" class="login-container">
         <h3 class="login_title">注册成为机构</h3>
 
         <el-form-item label="机构名称" prop="username">
@@ -9,7 +9,16 @@
           <span v-show="error_name" class="error_tip" style="display: block">{{ error_name_message }}</span>
         </el-form-item>
 
-        <el-select>（企业/学校）</el-select>
+        <el-form-item label="类型" prop="value">
+          <el-select v-model="value" filterable placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
 
         <el-form-item label="密码" prop="pass">
           <el-input type="password" @blur="check_pwd" v-model="password" autocomplete="off"></el-input>
@@ -21,7 +30,7 @@
           <span v-show="error_check_password" class="error_tip">两次输入的密码不一致</span>
         </el-form-item>
 
-        <el-form-item label="机构联系人手机号" prop="phone">
+        <el-form-item label="机构负责人手机号" prop="phone">
           <el-input type="tel" @blur="check_phone" v-model="mobile"></el-input>
           <span v-show="error_phone" class="error_tip">{{ error_phone_message }}</span>
         </el-form-item>
@@ -41,8 +50,8 @@
           <el-button>重置</el-button>
         </el-form-item>
 
-        <el-row style="text-align: center; margin-top: -10px;;">
-          <router-link to="/login"><el-link type="primary">用户登录</el-link></router-link>
+        <el-row style="text-align: center; margin-top: 5px;">
+          <el-link @click="toPath('/login')" type="primary">用户登录</el-link>
         </el-row>
       </el-form>
     </div>
@@ -55,12 +64,24 @@ export default {
   data() {
     return {
       options: [{
-          value: '1',
-          label: '普通用户'
-        }, {
-          value: '2',
-          label: '竞赛发布人员'
-        }],
+        value: '选项1',
+        label: '学校'
+      }, {
+        value: '选项2',
+        label: '国企'
+      }, {
+        value: '选项3',
+        label: '私营企业'
+      }, {
+        value: '选项4',
+        label: '政府'
+      }, {
+        value: '选项5',
+        label: '医院'
+      }, {
+        value: '选项6',
+        label: '其他'
+      }],
       value: '',
 
       error_name: false,
@@ -83,10 +104,14 @@ export default {
     };
   },
   methods: {
+    // 路由跳转
+    toPath(isPath) {
+      this.$router.push(isPath);
+    },
     // 检查用户名
     check_username() {
       const len = this.username.length;
-      if (len<5 || len>20) {
+      if (len<3 || len>10) {
         this.error_name_message = '请输入5-20个字符的用户名'
         this.error_name = true;
       } else {
@@ -113,19 +138,11 @@ export default {
     // 检查密码
     check_pwd() {
       const len = this.password.length;
-      if (len<8 || len>20) {
-        this.error_password = true;
-      } else {
-        this.error_password = false;
-      }
+      this.error_password = len < 8 || len > 20;
     },
     // 检查确认密码
     check_cpwd() {
-      if (this.password != this.password2) {
-        this.error_check_password = true;
-      } else {
-        this.error_check_password = false;
-      }
+      this.error_check_password = this.password !== this.password2;
     },
     // 检查手机号
     check_phone() {
@@ -253,7 +270,7 @@ export default {
   .login-container {
     border-radius: 15px;
     background-clip: padding-box;
-    margin: 90px auto;
+    margin: 120px auto;
     width: 350px;
     padding: 35px 35px 15px 35px;
     background: #fff;
