@@ -91,7 +91,7 @@ export default {
   left: 50%;
   transform: translateX(-50%);
   position: fixed;
-  z-index: 2;
+  z-index: 99;
   box-shadow: rgb(0 0 0 / 17%) 13px 15px 13px 2px;
 }
 #nav_bar :hover {

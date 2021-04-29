@@ -1,41 +1,42 @@
 <template>
 <div>
+  <div class="container">
+    <el-drawer
+      v-bind:title="title"
+      v-model="drawer"
+      :direction="direction"
+      :modal="false"
+      :size="'30%'"
+      :close-on-press-escape="true"
+      :before-close="handleClose" destroy-on-close>
 
-  <el-drawer
-    v-bind:title="title"
-    v-model="drawer"
-    :direction="direction"
-    :modal="false"
-    :size="'30%'"
-    :close-on-press-escape="true"
-    :before-close="handleClose" destroy-on-close>
+      <div style="margin-left: 20px">
+        <span>难度：{{header}}</span>
+        <br><br>
+        <span>算法类型：{{alg_type}}</span>
+        &emsp;&emsp;
+        <span>数据结构：{{ds_type}}</span>
+        <br><br>
+        <h3>描述</h3>
+        <span v-html="message"></span>
+        <br><br>
+        <el-button>上一题</el-button>
+        <el-button>下一题</el-button>
+      </div>
+    </el-drawer>
 
-    <div style="margin-left: 20px">
-      <span>难度：{{header}}</span>
+
+    <div style="width: 68%; float: right">
+      <el-button @click="drawer = true" type="" style="margin-left: 16px;">
+        题目详情
+      </el-button>
+      <br>
+      <textarea id="code_input" ref="textarea" v-model="code" style="resize: none" rows="40" cols="80" autofocus></textarea>
+
       <br><br>
-      <span>算法类型：{{alg_type}}</span>
-      &emsp;&emsp;
-      <span>数据结构：{{ds_type}}</span>
-      <br><br>
-      <h3>描述</h3>
-      <span v-html="message"></span>
-      <br><br>
-      <el-button>上一题</el-button>
-      <el-button>下一题</el-button>
+      <el-button @click="execute">运行</el-button>
+      <span>&emsp;&emsp;运行结果：{{msg}}</span>
     </div>
-  </el-drawer>
-
-
-  <div style="width: 68%; float: right">
-    <el-button @click="drawer = true" type="" style="margin-left: 16px;">
-      题目详情
-    </el-button>
-    <br>
-    <textarea id="code_input" ref="textarea" v-model="code" style="resize: none" rows="40" cols="80" autofocus></textarea>
-
-    <br><br>
-    <el-button @click="execute">运行</el-button>
-    <span>&emsp;&emsp;运行结果：{{msg}}</span>
   </div>
 </div>
 </template>
@@ -183,8 +184,16 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+.container {
+  width: 100%;
+  margin: 0 auto;
+  padding-top: 150px;
+}
+
 .tip_login {
   text-underline: black;
   cursor: pointer;
 }
+
 </style>
