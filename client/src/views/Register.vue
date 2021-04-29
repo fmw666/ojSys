@@ -26,7 +26,7 @@
 
         <el-form-item label="短信验证码">
           <el-input style="width: 100px; margin-right: 10px" v-model="sms_code" type="tel"></el-input>
-          <el-button type="primary" v-bind:disabled=btn_disabled plain @click="send_sms_code()">{{ sms_code_tip }}</el-button>
+          <el-button type="primary" v-bind:disabled=btn_disabled @click="send_sms_code()">{{ sms_code_tip }}</el-button>
         </el-form-item>
 
 
@@ -34,6 +34,8 @@
           <el-button type="primary" @click="submit">注册</el-button>
           <el-button @click="reset">重置</el-button>
         </el-form-item>
+
+        <el-divider></el-divider>
 
         <el-row style="text-align: center; margin-top: 5px;">
           <el-link class="set_center" @click="toPath('/login')" type="primary">已有帐户？马上登录</el-link>
@@ -281,8 +283,8 @@ export default {
 
   .set_center {
     vertical-align: middle;
-    height: 30px;
-    line-height: 30px;
+    height: 25px;
+    line-height: 25px;
   }
 
 </style>

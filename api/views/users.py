@@ -1,3 +1,4 @@
+from django_redis import get_redis_connection
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -54,6 +55,42 @@ class UserDetailView(RetrieveAPIView):
     def get_object(self):
         """重写此方法返回，要展示的用户模型对象"""
         return self.request.user
+
+
+class UserPSWForgetView(APIView):
+    """用户找回密码"""
+
+    def post(self, request):
+        mobile = request.data['mobile']
+        sms_code = request.data['sms_code']
+        code = self.validate(mobile, sms_code)
+
+        return Response({'code': code})
+
+    @staticmethod
+    def validate(mobile, sms_code):
+        """校验验证码"""
+        redis_conn = get_redis_connection('verify_codes')
+        real_sms_code = redis_conn.get('sms_%s' % mobile)
+
+        # 向 redis 存储数据时都是以字条串的形式存储的，取出来后都是 bytes 类型
+        if real_sms_code is None or sms_code != real_sms_code.decode():
+            return 0
+        return 1
+
+
+class UserPSWResetView(APIView):
+    """用户重设密码"""
+    @staticmethod
+    def post(request):
+        try:
+            user = User.objects.get(mobile=request.data['mobile'])
+            user.set_password(request.data['password'])
+            user.save()
+            code = 1
+        except:
+            code = 0
+        return Response({'code': code})
 
 
 class EmailView(UpdateAPIView):

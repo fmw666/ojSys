@@ -4,12 +4,12 @@
       <h3 class="login_title">用户登录</h3>
 
       <el-form-item label="用户名/手机号" prop="username">
-        <el-input type="text" @change="check_username" v-model="username" autocomplete="off"></el-input>
+        <el-input type="text" v-model="username" autocomplete="off"></el-input>
         <el-alert v-show="error_username" title="请输入5-20个字符的用户名" type="warning" ></el-alert>
       </el-form-item>
 
       <el-form-item label="密码" prop="pass">
-        <el-input type="password" @change="check_pwd" v-model="password" autocomplete="off"></el-input>
+        <el-input type="password" v-model="password" autocomplete="off"></el-input>
         <el-alert v-show="error_password" title="密码最少8位，最长20位" type="warning"></el-alert>
       </el-form-item>
 
@@ -17,6 +17,8 @@
         <el-button type="primary" @click="submit">登录</el-button>
         <el-button @click="reset">重置</el-button>
       </el-form-item>
+
+      <el-divider></el-divider>
 
       <el-row style="margin-top: 5px; position: relative;">
         <el-link @click="toPath('/forget')" type="primary">忘记密码</el-link>
@@ -152,7 +154,7 @@
 
   .set_center {
     vertical-align: middle;
-    height: 30px;
-    line-height: 30px;
+    height: 25px;
+    line-height: 25px;
   }
 </style>

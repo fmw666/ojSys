@@ -113,7 +113,8 @@ class UserDetailSerializer(serializers.ModelSerializer):
     # is_ps = serializers.BooleanField(source="is_p")
     participant = serializers.SerializerMethodField()
 
-    def get_participant(self, obj):
+    @staticmethod
+    def get_participant(obj):
         participant_data = ParticipantDetailSerializer(obj.participant).data
         return participant_data
 

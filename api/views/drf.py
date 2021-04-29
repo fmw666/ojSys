@@ -7,12 +7,14 @@ from ..serializers.drf import ArticleSerializer
 
 
 class ArticleList(APIView):
-    def get(self, request):
+    @staticmethod
+    def get(request):
         articles = Article.objects.all()
         serializer = ArticleSerializer(articles, many=True)
         return Response(serializer.data)
 
-    def post(self, request):
+    @staticmethod
+    def post(request):
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(author=request.user)
@@ -21,18 +23,19 @@ class ArticleList(APIView):
 
 
 class ArticleDetail(APIView):
-    def get_object(self, pk):
+    @staticmethod
+    def get_object(pk):
         try:
             return Article.objects.get(pk=pk)
         except Article.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk, format=None):
+    def get(self, request, pk):
         article = self.get_object(pk)
         serializer = ArticleSerializer(article)
         return Response(serializer.data)
 
-    def put(self, request, pk, format=None):
+    def put(self, request, pk):
         article = self.get_object(pk)
         serializer = ArticleSerializer(instance=article, data=request.data)
         if serializer.is_valid():
@@ -40,7 +43,7 @@ class ArticleDetail(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk, format=None):
+    def delete(self, request, pk):
         article = self.get_object(pk)
         article.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
