@@ -19,7 +19,7 @@ export default {
     }
   },
   watch: {//使用watch 监听$router的变化
-    $router(to, from) {
+    $route(to, from) {
       //如果to索引大于from索引,判断为前进状态,反之则为后退状态
       if (to.meta.index > from.meta.index) {
         this.transitionName = 'fold-left';
@@ -44,11 +44,11 @@ body{
 
 .fold-left-enter-active {
   animation-name: fold-left-in;
-  animation-duration: .7s;
+  animation-duration: .6s;
 }
 .fold-left-leave-active {
   animation-name: fold-left-out;
-  animation-duration: .7s;
+  animation-duration: .6s;
 }
 @keyframes fold-left-in {
   0% {
@@ -80,11 +80,11 @@ body{
 }
 .fold-right-enter-active {
   animation-name: fold-right-in;
-  animation-duration: .7s;
+  animation-duration: .6s;
 }
 .fold-right-leave-active {
   animation-name: fold-right-out;
-  animation-duration: .7s;
+  animation-duration: .6s;
 }
 @keyframes fold-right-in{
   0% {

@@ -111,6 +111,9 @@
             }
             location.href = return_url
           })
+          .catch(error => {
+            ElMessage.error('用户名/手机号 或 密码 有误');
+          })
         } else {
           ElMessage.error('请检查您的输入');
         }

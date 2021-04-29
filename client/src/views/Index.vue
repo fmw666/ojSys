@@ -8,11 +8,11 @@
         </div>
         <div class="selector">
           <h2>Question bank</h2>
-          <div class="shoes-size">
+          <div class="shoes">
             题库现有题：
-            <span>{{total_problem_cnt}}</span>
+            <span style="color: whitesmoke; font-weight: bold">{{total_problem_cnt}}</span>
           </div>
-          <a href="#" class="by-btn">Let's go</a>
+<!--          <a href="#" class="by-btn">Let's go</a>-->
         </div>
       </div>
 
@@ -38,7 +38,7 @@
           />
         </div>
         <div v-if="login_flag" class="selector">
-          <h2>欢迎登陆，{{username}}</h2>
+          <h2>欢迎登录，{{username}}</h2>
           <div style="margin: 15px 0">
             <span class="shoes-size">
             刷题：

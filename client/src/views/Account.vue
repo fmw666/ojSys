@@ -132,7 +132,7 @@ export default {
         this.ruleForm.phone = this.mobile
         this.ruleForm.email = this.email
       }).catch(error => {
-        if (error.response.status==401 || error.response.status==403) {
+        if (error.response.status===401 || error.response.status===403) {
           location.href = '/login?next=/account';
         }
       });
@@ -213,15 +213,15 @@ export default {
 }
 #account .box-card {
   position: relative;
-  top: 100px;
-  box-shadow: rgb(0 0 0 / 17%) 13px 15px 13px 2px;
+  top: 120px;
+  box-shadow: rgba(0 0 0 0.17) 13px 15px 13px 2px;
 }
 #account .box-card /deep/ .el-form .el-input .el-input__inner {
   width: 30%;
 }
 #account .box-card .isSubmit {
   width: 150px;
-  margin: 60px auto 0px;
+  margin: 60px auto 0;
 }
 #account .box-card .account_title {
   display: flex;

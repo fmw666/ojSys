@@ -247,6 +247,7 @@ export default {
       }
     },
     prev() {
+      this.step1 = '验证方式';
       this.active --;
     },
     // 路由跳转

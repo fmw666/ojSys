@@ -1,49 +1,47 @@
 <template>
   <div id="contexts">
+    <div class="container">
+      <router-link to="/sregister">机构注册？成为赛事方</router-link>
 
-    <br><br><br><br><br><br>
-
-    <router-link to="/sregister">机构注册？成为赛事方</router-link>
-
-    <div class="left">
-      <span v-if="id_sort">
-        <a @click="on_sort('-id')" :class="ordering=='id'?'active':''">报名中 🔽</a>
-      </span>
-      <span v-else>
-        <a @click="on_sort('id')" :class="ordering=='id'?'active':''">报名中 🔼</a>
-      </span>
-      |
-      <span v-if="header_sort">
-        <a @click="on_sort('-header')" :class="ordering=='header'?'active':''">进行中 🔽</a>
-      </span>
-      <span v-else>
-        <a @click="on_sort('header')" :class="ordering=='header'?'active':''">进行中 🔼</a>
-      </span>
-      |
-      <span v-if="header_sort">
-        <a @click="on_sort('-header')" :class="ordering=='header'?'active':''">已结束 🔽</a>
-      </span>
-      <span v-else>
-        <a @click="on_sort('header')" :class="ordering=='header'?'active':''">已结束 🔼</a>
-      </span>
-    </div>
-
-    <div class="pagenation">
-      <a v-show="previous" @click="on_page(previous)">上一页</a>
-      <a v-for="num in page_nums" @click="on_page(num)" :class="num==page?'active':''">{{num}}</a>
-      <a v-show="next" @click="on_page(next)">下一页></a>
-    </div>
-
-    <el-card class="box-card">
-      <div v-for="context in contexts" :key="context.id" @click="enter(context.id)" class="items">
-        <h4>{{context.name}}</h4>
-        <div class="tips">
-          <span class="tip">主办方：{{context.author_username}}</span>
-          <span class="tip">| {{context.create_date}}</span>
-        </div>
-        <el-divider></el-divider>
+      <div class="left">
+        <span v-if="id_sort">
+          <a @click="on_sort('-id')" :class="ordering==='id'?'active':''">报名中 🔽</a>
+        </span>
+        <span v-else>
+          <a @click="on_sort('id')" :class="ordering==='id'?'active':''">报名中 🔼</a>
+        </span>
+        |
+        <span v-if="header_sort">
+          <a @click="on_sort('-header')" :class="ordering==='header'?'active':''">进行中 🔽</a>
+        </span>
+        <span v-else>
+          <a @click="on_sort('header')" :class="ordering==='header'?'active':''">进行中 🔼</a>
+        </span>
+        |
+        <span v-if="header_sort">
+          <a @click="on_sort('-header')" :class="ordering==='header'?'active':''">已结束 🔽</a>
+        </span>
+        <span v-else>
+          <a @click="on_sort('header')" :class="ordering==='header'?'active':''">已结束 🔼</a>
+        </span>
       </div>
-    </el-card>
+
+      <div class="pagination">
+        <a v-show="previous" @click="on_page(previous)">上一页</a>
+        <a v-for="num in page_nums" @click="on_page(num)" :class="num===page?'active':''">{{num}}</a>
+        <a v-show="next" @click="on_page(next)">下一页></a>
+      </div>
+
+      <el-card class="box-card">
+        <el-card v-for="context in contexts" :key="context.id" @click="enter(context.id)" class="items" shadow="always">
+          <h4 style="display: inline">{{context.name}}</h4>
+          <div class="tips">
+            <span class="tip">主办方：{{context.author_username}}</span>
+            <span class="tip">| {{context.create_date}}</span>
+          </div>
+        </el-card>
+      </el-card>
+    </div>
   </div>
 </template>
 
@@ -172,28 +170,25 @@
   }
 </script>
 
-<style>
+<style scoped>
 .left {
   width: 600px;
   height: 100%;
   border: black 1px solid;
 }
-#contexts {
+.container {
   width: 1142px;
   margin: 0 auto;
+  padding-top: 150px;
 }
-#contexts .box-card {
+.container .box-card {
   position: relative;
   top: 100px;
-  box-shadow: rgb(0 0 0 / 17%) 13px 15px 13px 2px;
+  box-shadow: rgba(0 0 0 .17) 13px 15px 13px 2px;
 }
 .items {
   cursor: pointer;
-}
-.items :hover {
-  -webkit-box-shadow: #ccc 0px 10px 10px;
-  -moz-box-shadow: #ccc 0px 10px 10px;
-  box-shadow: #ccc 0px 10px 10px;
+  margin: 10px 0;
 }
 .tips {
   margin-top: 10px;
