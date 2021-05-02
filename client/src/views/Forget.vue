@@ -194,6 +194,7 @@ export default {
     verify () {
       if (this.sms_code.length !== 6) {
         ElMessage.error('请输入正确格式的验证码');
+        return;
       }
       if (this.error_phone === false) {
         this.$axios.post(this.$host + "/api/v1/user/forget/", {
@@ -270,7 +271,7 @@ export default {
 .container {
   border-radius: 15px;
   background-clip: padding-box;
-  margin: 180px auto;
+  margin: 10% auto;
   width: 480px;
   padding: 35px 35px 15px 35px;
   background: #fff;

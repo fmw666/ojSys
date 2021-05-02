@@ -4,7 +4,7 @@
       <el-menu-item index="/"><img style="width: 50px" src="../../assets//ico.png" alt=""/></el-menu-item>
       <el-menu-item index="/problems">刷题区</el-menu-item>
       <el-menu-item index="/contexts">竞赛区</el-menu-item>
-      <el-submenu v-if="login_flag" class="sub_menu">
+      <el-submenu v-if="login_flag" class="sub_menu" index="/account">
         <template #title>您好，{{username}}</template>
         <el-menu-item index="/account">个人中心</el-menu-item>
         <el-menu-item index="/login" @click="logout()"> 退出登录</el-menu-item>
@@ -96,20 +96,20 @@ export default {
 }
 #nav_bar :hover {
 }
-#nav_bar /deep/ .el-menu--horizontal {
+#nav_bar ::v-deep(.el-menu--horizontal) {
   border-radius: 8px;
   overflow: hidden;
 }
 
-#nav_bar /deep/ .el-menu--horizontal > .el-menu-item {
+#nav_bar ::v-deep(.el-menu--horizontal) > .el-menu-item {
   height: 72px;
   line-height: 72px;
 }
-#nav_bar /deep/ .el-menu--horizontal > .el-submenu {
+#nav_bar ::v-deep(.el-menu--horizontal) > .el-submenu {
   height: 72px;
   line-height: 72px;
 }
-#nav_bar /deep/ .el-menu--horizontal > .el-submenu  .el-submenu__title{
+#nav_bar ::v-deep(.el-menu--horizontal) > .el-submenu  .el-submenu__title{
   line-height: 72px;
   height: 72px;
 }

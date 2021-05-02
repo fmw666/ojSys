@@ -1,69 +1,61 @@
 <template>
   <div id="account">
-    <el-card class="box-card">
-      <div class="account_title">
-        <div class="account_title_text">个人信息页面</div>
-        <el-link :underline="false" @click="logout">退出登录</el-link>
-        <el-avatar> user </el-avatar>
-      </div>
+    <div class="container">
+      <el-card class="box-card">
+        <div class="account_title">
+          <div class="account_title_text">个人信息页面</div>
+          <el-link :underline="false" @click="logout">退出登录</el-link>
+          <el-avatar src="/src/assets/img/avatar.png"></el-avatar>
+        </div>
 
-      <el-divider><i class="el-icon-mobile-phone"></i></el-divider>
+        <el-divider><i class="el-icon-mobile-phone"></i></el-divider>
 
-      <el-form
-        :disabled="disabled"
-        :model="ruleForm"
-        :rules="rules"
-        ref="ruleForm"
-        label-width="100px"
-        class="demo-ruleForm"
-      >
-        <el-form-item label="用户名：" prop="username">
-          <el-input v-model="ruleForm.username"></el-input>
-        </el-form-item>
-        <el-form-item label="手机号：" prop="phone">
-          <el-input v-model="ruleForm.phone"></el-input>
-        </el-form-item>
-        <el-form-item prop="email" label="邮箱：">
-          <div v-if="set_email">
-            <input v-model="email">
-            <input @click="save_email" type="button" name="" value="保 存" />
-            <input @click="set_email = false" type="reset" name="" value="取 消" />
-            <div v-if="email_error">邮箱格式错误</div>
-          </div>
-          <div v-else-if="email">
-            {{ email }}
-            <div v-if="email_active">已验证</div>
-            <div v-else>
-              待验证<input
-                @click="save_email"
-                :disabled="send_email_btn_disabled"
-                type="button"
-                :value="send_email_tip"
-                class="email_tip_btn"
-              />
-            </div>
-          </div>
-          <div v-else>
-            <input @click="set_email = true" type="button" name="" value="设 置" />
-          </div>
-        </el-form-item>
-      </el-form>
-      <div class="isSubmit">
-        <el-button type="primary" @click="onSubmit('ruleForm')" class="isChange"
-          >修改</el-button
+        <el-form
+          :disabled="disabled"
+          :model="ruleForm"
+          :rules="rules"
+          ref="ruleForm"
+          label-width="100px"
+          class="demo-ruleForm"
         >
-        <el-button @click="onOpen">取消</el-button>
-      </div>
-    </el-card>
-    <div>
-      个人信息页面
-      <hr />
-      用户名：<span>{{ username }}</span
-      ><br />
-      手机号：<span>{{ mobile }}</span
-      ><br />
-      <span>Email：</span>
-
+          <el-form-item label="用户名：" prop="username">
+            <el-input v-model="ruleForm.username"></el-input>
+          </el-form-item>
+          <el-form-item label="手机号：" prop="phone">
+            <el-input v-model="ruleForm.phone"></el-input>
+          </el-form-item>
+          <el-form-item prop="email" label="邮箱：">
+            <div v-if="set_email">
+              <input v-model="email">
+              <input @click="save_email" type="button" name="" value="保 存" />
+              <input @click="set_email = false" type="reset" name="" value="取 消" />
+              <div v-if="email_error">邮箱格式错误</div>
+            </div>
+            <div v-else-if="email">
+              {{ email }}
+              <div v-if="email_active">已验证</div>
+              <div v-else>
+                待验证<input
+                  @click="save_email"
+                  :disabled="send_email_btn_disabled"
+                  type="button"
+                  :value="send_email_tip"
+                  class="email_tip_btn"
+                />
+              </div>
+            </div>
+            <div v-else>
+              <input @click="set_email = true" type="button" name="" value="设 置" />
+            </div>
+          </el-form-item>
+        </el-form>
+        <div class="isSubmit">
+          <el-button type="primary" @click="onSubmit('ruleForm')" class="isChange"
+            >修改</el-button
+          >
+          <el-button @click="onOpen">取消</el-button>
+        </div>
+      </el-card>
     </div>
   </div>
 </template>
@@ -207,31 +199,32 @@ export default {
 </script>
 
 <style scoped>
-#account {
+
+.container {
   width: 1142px;
   margin: 0 auto;
 }
-#account .box-card {
+.container .box-card {
   position: relative;
   top: 120px;
   box-shadow: rgba(0 0 0 0.17) 13px 15px 13px 2px;
 }
-#account .box-card /deep/ .el-form .el-input .el-input__inner {
+.container .box-card ::v-deep(.el-form) .el-input .el-input__inner {
   width: 30%;
 }
-#account .box-card .isSubmit {
+.container .box-card .isSubmit {
   width: 150px;
   margin: 60px auto 0;
 }
-#account .box-card .account_title {
+.container .box-card .account_title {
   display: flex;
   padding-right: 50px;
 }
-#account .box-card .account_title .account_title_text {
+.container .box-card .account_title .account_title_text {
   flex: 1;
   line-height: 42px;
 }
-#account .box-card .account_title .el-link {
+.container .box-card .account_title .el-link {
   width: 100px;
 }
 

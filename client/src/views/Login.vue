@@ -39,6 +39,9 @@
     name: "login",
     data() {
       return {
+        user_id: sessionStorage.user_id || localStorage.user_id,
+        token: sessionStorage.token || localStorage.token,
+
         username: '',
         password: '',
         error_username: false,
@@ -66,6 +69,25 @@
             this.error_password = false
           }
         }
+      }
+    },
+    created() {
+      // 判断用户登录状态
+      if (this.user_id && this.token) {
+        this.$axios.get(this.$host + "/api/v1/user/", {
+        // 向后端传递 JWT token 的方法
+        headers: {
+          'Authorization': 'JWT ' + this.token
+        },
+        responseType: 'json'
+        }).then(response => {
+          console.log(response.data)
+          this.username = response.data.username
+          ElMessage.warning('请在退出登录后再访问')
+          this.$router.push('/')
+        }).catch(error => {
+
+        });
       }
     },
     methods: {
@@ -141,7 +163,7 @@
   .login-container {
     border-radius: 15px;
     background-clip: padding-box;
-    margin: 240px auto;
+    margin: 10% auto;
     width: 350px;
     padding: 35px 35px 15px 35px;
     background: #fff;

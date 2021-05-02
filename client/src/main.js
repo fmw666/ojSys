@@ -8,6 +8,8 @@ import hosts from "./store/hosts"
 import ElementPlus from 'element-plus'
 import '../node_modules/element-plus/lib/theme-chalk/index.css'
 import '../node_modules/element-plus/lib/theme-chalk/display.css'
+// import '../node_modules/dayjs/locale/zh-cn'
+// import locale from '../node_modules/element-plus/lib/locale/lang/zh-cn'
 
 
 const app = createApp(App)
