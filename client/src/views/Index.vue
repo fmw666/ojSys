@@ -7,7 +7,7 @@
           <img src="../assets/img/题库.png" alt="" />
         </div>
         <div class="selector">
-          <h2>Question bank</h2>
+          <h2>算法题库</h2>
           <div class="shoes">
             题库现有题：
             <span style="color: whitesmoke; font-weight: bold">{{total_problem_cnt}}</span>
@@ -50,12 +50,12 @@
               <span>{{problem_cnt}} / {{total_context_cnt}}</span>
             </span>
           </div>
-          <a href="#" @click="toPath('/account')" class="by-btn">个人中心</a>
+          <a href="#" @click="to_path('/account')" class="by-btn">个人中心</a>
         </div>
         <div v-else class="selector">
           <h2>Personal Center</h2>
-          <a href="#" @click="toPath('/login')" class="by-btn">Sign in</a>
-          <a href="#" @click="toPath('/register')" class="by-btn">Sign up</a>
+          <a href="#" @click="to_path('/login')" class="by-btn">Sign in</a>
+          <a href="#" @click="to_path('/register')" class="by-btn">Sign up</a>
         </div>
       </div>
     </div>
@@ -63,8 +63,10 @@
 </template>
 
 <script>
+import {Base} from '../components/mixins'
 
 export default {
+  mixins: [Base],
   name: 'Index',
   data() {
     return {
@@ -74,17 +76,11 @@ export default {
 
       login_flag: false,
       problem_cnt: 0,
-      total_problem_cnt: 0,
-      total_context_cnt: 0,
     }
   },
   components: {
   },
   mounted() {
-    // 获取题数
-    this.get_problem_cnt()
-    // 获取比赛数
-    this.get_context_cnt()
     // 判断用户登录状态
     if (this.user_id && this.token) {
       this.$axios.get(this.$host + "/api/v1/user/", {
@@ -117,30 +113,7 @@ export default {
       localStorage.clear();
       location.href = '/login';
     },
-    // 路由跳转
-    toPath(isPath) {
-      this.$router.push(isPath);
-    },
-    // 获取 problem cnt
-    get_problem_cnt() {
-      this.$axios.get(this.$host + "/api/v1/problems/", {
-        responseType: 'json'
-      }).then(response => {
-        this.total_problem_cnt = response.data.count
-      }).catch(error => {
-        console.log(error.response.data)
-      })
-    },
-    // 获取 context cnt
-    get_context_cnt() {
-      this.$axios.get(this.$host + "/api/v1/contexts/", {
-        responseType: 'json'
-      }).then(response => {
-        this.total_context_cnt = response.data.count
-      }).catch(error => {
-        console.log(error.response.data)
-      })
-    }
+
   }
 }
 </script>

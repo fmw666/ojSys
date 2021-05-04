@@ -4,6 +4,7 @@ import Problems from '../views/Problems.vue'
 import ProblemDetail from "../views/ProblemDetail.vue";
 import ContextDetail from "../views/ContextDetail.vue"
 import Contexts from '../views/Contexts.vue'
+import Forum from '../views/forum.vue'
 import Login from "../views/Login.vue"
 import Register from "../views/Register.vue"
 import SRegister from "../views/SRegister.vue";
@@ -52,6 +53,14 @@ const routes = [
       index: 5,
     },
     component: ContextDetail
+  },
+  {
+    path: '/forum',
+    name: 'Forum',
+    meta: {
+      index: 12,
+    },
+    component: Forum
   },
   {
     path: '/login',

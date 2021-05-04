@@ -112,7 +112,7 @@ export default {
     check_username() {
       const len = this.username.length;
       if (len<3 || len>10) {
-        this.error_name_message = '请输入5-20个字符的用户名'
+        this.error_name_message = '请输入3-20个字符的用户名'
         this.error_name = true;
       } else {
         this.error_name = false;

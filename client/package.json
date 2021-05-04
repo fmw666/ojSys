@@ -7,11 +7,13 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "codemirror": "^5.61.0",
     "element-plus": "^1.0.1-beta.23",
     "vue": "^3.0.4",
     "vue-axios": "2.1.5",
     "vue-codemirror": "^4.0.6",
     "vue-router": "^4.0.0-0",
+    "vue3-ace-editor": "^2.0.2",
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {

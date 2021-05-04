@@ -11,7 +11,7 @@ urlpatterns = [
     # 注册用户
     url(r'^users/$', users.UserView.as_view()),
     # 判断用户名是否已经注册
-    url(r'^users/username/(?P<username>\w{5,20})/count/$', users.UsernameCountView.as_view()),
+    url(r'^users/username/(?P<username>\w{3,20})/count/$', users.UsernameCountView.as_view()),
     # 判断手机号是否已经注册
     url(r'^users/mobile/(?P<mobile>1[3-9]\d{9})/count/$', users.MobileCountView.as_view()),
     # 获取用户详情
@@ -30,8 +30,6 @@ urlpatterns = [
 
     # 获取例题列表
     url(r'^problems/$', problem.ProblemListView.as_view()),
-    # 查询例题
-    # url(r'^problems/(?P<p_id>\d+)', problem.ProblemListView.as_view()),
     # 查询单道例题
     url(r'^problems/(?P<pid>\d+)$', problem.ProblemView.as_view()),
 

@@ -1,58 +1,90 @@
 <template>
 <div>
   <div class="container">
-    <el-drawer
-      v-bind:title="title"
-      v-model="drawer"
-      :direction="direction"
-      :modal="false"
-      :size="'30%'"
-      :close-on-press-escape="true"
-      :before-close="handleClose" destroy-on-close>
 
-      <div style="margin-left: 20px">
-        <span>难度：{{header}}</span>
-        <br><br>
-        <span>算法类型：{{alg_type}}</span>
-        &emsp;&emsp;
-        <span>数据结构：{{ds_type}}</span>
-        <br><br>
-        <h3>描述</h3>
-        <span v-html="message"></span>
-        <br><br>
-        <el-button>上一题</el-button>
-        <el-button>下一题</el-button>
+    <div class="description">
+      <el-scrollbar native class="scrollbar">
+        <div style="margin: 20px 30px 30px 30px; height: max-content">
+          <div class="header">{{pid}}. {{name}}</div>
+          <div class="tags">
+            <el-tag>难度：<b>{{header}}</b></el-tag>
+            <el-tag>算法类型：<b>{{alg_type}}</b></el-tag>
+            <el-tag>数据结构：<b>{{ds_type}}</b></el-tag>
+          </div>
+          <div class="title">描述</div>
+          <span class="msg" v-html="message"></span>
+
+          <div class="title">输入样例</div>
+          <el-tag v-if="input_example" class="msg example" v-html="input_example"></el-tag>
+          <span v-else class="msg">无</span>
+
+          <div class="title">输出样例</div>
+          <el-tag v-if="output_example" class="msg example" v-html="output_example"></el-tag>
+          <span v-else class="msg">无</span>
+
+          <div v-if="challenge" class="title">挑战</div>
+          <span v-if="challenge" class="msg" v-html="challenge"></span>
+
+        </div>
+
+      </el-scrollbar>
+      <div class="extra">
+        <el-button @click="to_path('/problems')" size="medium" icon="el-icon-back" round>返回列表</el-button>
+        <el-button-group style="float: right">
+          <el-button size="medium" round icon="el-icon-arrow-left">上一题</el-button>
+          <el-button size="medium" round>下一题<i class="el-icon-arrow-right el-icon--right"></i></el-button>
+        </el-button-group>
       </div>
-    </el-drawer>
-
-
-    <div style="width: 68%; float: right">
-      <el-button @click="drawer = true" type="" style="margin-left: 16px;">
-        题目详情
-      </el-button>
-      <br>
-      <textarea id="code_input" ref="textarea" v-model="code" style="resize: none" rows="40" cols="80" autofocus></textarea>
-
-      <br><br>
-      <el-button @click="execute">运行</el-button>
-      <span>&emsp;&emsp;运行结果：{{msg}}</span>
     </div>
+
+    <div class="text_input">
+      <div class="code_text">
+
+        <textarea style="height: 100%; width: 100%" id="code_input" ref="textarea" v-model="code" style="resize: none" rows="40" cols="80" autofocus></textarea>
+      </div>
+      <div class="extra">
+        <el-button style="float: right" @click="execute" type="primary" icon="el-icon-edit">运行</el-button>
+        <span style="line-height: 39px; width: 50px">
+          <span class="status" style="font-size: 15px">运行结果：</span>
+          <span class="status_code">
+            <span v-if="result === 'wa'">
+              <el-tag>
+                <i style="color: #ed3f14" class="el-icon-error"></i>&ensp;
+                <span style="color: #495060">Wrong Answer</span>
+              </el-tag>
+            </span>
+            <span v-if="result === 'ac'">
+              <el-tag>
+                <i style="color: #19be6b" class="el-icon-success"></i>&ensp;
+                <span style="color: #495060">Accepted</span>
+              </el-tag>
+            </span>
+          </span>
+        </span>
+      </div>
+      <div class="status" style="margin-top: 10px;">
+        {{msg}}
+      </div>
+    </div>
+
   </div>
 </div>
 </template>
 
 <script>
+import {Base, Auth} from '../components/mixins'
+
 import { defineComponent } from 'vue'
 import { ElMessage } from 'element-plus'
 export default defineComponent({
   name: "ProblemPage",
+  mixins: [Base, Auth],
+  components: {
+
+  },
   data() {
     return {
       code: '',
-      user_id: sessionStorage.user_id || localStorage.user_id,
-      token: sessionStorage.token || localStorage.token,
-
-      is_login: false,
 
       drawer: false,
       direction: 'ltr',
@@ -64,20 +96,38 @@ export default defineComponent({
       header: '',
       alg_type: '',
       ds_type: '',
+      input_example: '',
+      output_example: '',
+      challenge: '',
 
       compiler_version: '',
       result: '',
       msg: '',
+
+      options: {
+        // codemirror options
+        tabSize: 4,
+        mode: 'text/x-csrc',
+        theme: 'solarized',
+        lineNumbers: true,
+        line: true,
+        // 代码折叠
+        foldGutter: true,
+        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+        // 选中文本自动高亮，及高亮方式
+        styleSelectedText: true,
+        lineWrapping: true,
+        highlightSelectionMatches: {showToken: /\w/, annotateScrollbar: true}
+      },
     }
   },
   mounted() {
     this.login_tip(true)
     this.init_data()
-
   },
   methods: {
-    go_login() {
-      this.$router.push('/login?next=/problems/' + this.pid)
+    onEditorCodeChange (newCode) {
+      this.$emit('update:value', newCode)
     },
     login_tip(flag) {
       // 判断用户登录状态
@@ -96,25 +146,27 @@ export default defineComponent({
               message: '已登录，欢迎您！' + username
             });
           }
-          this.is_login = true
+          this.login_flag = true
         }).catch(error => {
 
         });
       } else {
         if (flag) {
           ElMessage({
+            showClose: true,
             dangerouslyUseHTMLString: true,
-            message: '未登录，请先 <i><strong>登录</strong></i> &emsp;&emsp;<a @click="go_login" class="tip_login">去登录</a>',
-            duration: 0
+            message: '未登录，请先 <b>登录</b> 才能提交代码',
+            duration: 5000
           });
         }
-        this.is_login = false
+        this.login_flag = false
       }
     },
     handleClose(done) {
       done()
       document.getElementById('code_input').focus()
     },
+    // 获取 题目 信息
     init_data() {
       this.pid = this.$route.params && this.$route.params.id;
       this.$axios.get(this.$host + "/api/v1/problems/" + this.pid, {
@@ -127,15 +179,19 @@ export default defineComponent({
           this.alg_type = response.data['alg_type']
           this.ds_type = response.data['ds_type']
           this.code = response.data['init_code']
+          this.input_example = response.data['input_example']
+          this.output_example = response.data['output_example']
+          this.challenge = response.data['challenge']
 
           this.title = this.pid + '. ' + this.name
           console.log(response.data)
       });
 
     },
+    // 执行程序
     execute() {
       this.login_tip(false)
-      if (this.is_login === true) {
+      if (this.login_flag === true) {
         this.$axios.post(this.$host + "/api/v1/judge/", {
           user_id: this.user_id,
           id: this.pid,
@@ -159,7 +215,7 @@ export default defineComponent({
             });
           }
         }).catch(error => {
-
+          console.log(error)
         })
       } else {
         this.$confirm('您还未进行登录, 请先登录！', '提示', {
@@ -167,7 +223,7 @@ export default defineComponent({
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.go_login()
+          this.to_path('/login?next=/problems/' + this.pid)
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -176,24 +232,96 @@ export default defineComponent({
         });
       }
     },
-    go_list() {
-      this.$router.push('/problems')
-    }
-  }
+
+  },
+  computed: {
+  },
 })
 </script>
 
 <style scoped>
-
-.container {
-  width: 100%;
-  margin: 0 auto;
-  padding-top: 150px;
+body .el-scrollbar__wrap {
+    overflow-x: hidden;
 }
 
-.tip_login {
-  text-underline: black;
-  cursor: pointer;
+/*css设置默认显示滚动条*/
+.el-scrollbar__bar {
+  opacity: 1;
+}
+
+.container {
+  width: 1130px;
+  margin: 0 auto;
+  padding-top: 120px;
+}
+
+.description {
+  display: inline-block;
+  width: 50%;
+  height: 500px;
+}
+
+.scrollbar {
+  background: rgba(255,255,255,0.85);
+  -webkit-box-shadow:0 3px 3px #c3c3c3 inset;
+  -moz-box-shadow:0 3px 3px #c3c3c3 inset;
+  box-shadow:0 0 8px 2px #c3c3c3 inset;
+}
+
+.header {
+  font-size: 21px;
+  font-weight: bold;
+  font-family: Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Microsoft YaHei,\\5FAE\8F6F\96C5\9ED1,Arial,sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: #495060;
+}
+
+.tags {
+  margin: 16px 0;
+}
+
+.tags > span {
+  margin-right: 20px;
+}
+
+.title {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 25px 0 10px;
+  color: #3091f2;
+}
+
+.msg {
+  font-size: 16px;
+  color: #495060;
+}
+
+.example {
+  font-size: 14px;
+  height: max-content;
+  width: 100%;
+}
+
+.extra {
+  margin-top: 16px;
+}
+
+.text_input {
+
+  display: inline-block;
+  width: 45%;
+  float: right;
+  height: 100%;
+}
+
+.text_input > .code_text {
+  height: 494px;
+  width: 100%;
+}
+
+.status {
+  font-size: 14px;
+  color: #495060;
 }
 
 </style>

@@ -49,24 +49,27 @@
       </el-form-item>
 
       <el-form-item v-if="active===3" style="text-align: center; margin: 40px 0">
-        <el-link @click="toPath('/login')">已重置密码，快去登录吧~</el-link>
+        <el-link @click="to_path('/login')">已重置密码，快去登录吧~</el-link>
       </el-form-item>
 
 
       <el-divider></el-divider>
 
       <el-row style="margin-top: 5px; position: relative;">
-        <el-link @click="toPath('/login')" type="primary">不找了，想起来了</el-link>
+        <el-link @click="to_path('/login')" type="primary">不找了，想起来了</el-link>
         <span class="set_center">&emsp;|&emsp;</span>
-        <el-link @click="toPath('/register')" type="primary">我还是再注册一个吧</el-link>
+        <el-link @click="to_path('/register')" type="primary">我还是再注册一个吧</el-link>
       </el-row>
     </el-form>
   </div>
 </template>
 
 <script>
+import {Base} from '../components/mixins'
+
 import {ElMessage} from "element-plus";
 export default {
+  mixins: [Base],
   name: "Forget",
   data() {
     return {
@@ -250,10 +253,6 @@ export default {
     prev() {
       this.step1 = '验证方式';
       this.active --;
-    },
-    // 路由跳转
-    toPath(isPath) {
-      this.$router.push(isPath);
     },
   }
 }

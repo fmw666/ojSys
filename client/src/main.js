@@ -12,7 +12,9 @@ import '../node_modules/element-plus/lib/theme-chalk/display.css'
 // import locale from '../node_modules/element-plus/lib/locale/lang/zh-cn'
 
 
+
 const app = createApp(App)
 app.config.globalProperties.$axios = axios
 app.config.globalProperties.$host = hosts.host
 app.use(store).use(router).use(ElementPlus).mount('#app')
+

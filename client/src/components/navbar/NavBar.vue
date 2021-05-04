@@ -4,9 +4,12 @@
       <el-menu-item index="/"><img style="width: 50px" src="../../assets//ico.png" alt=""/></el-menu-item>
       <el-menu-item index="/problems">刷题区</el-menu-item>
       <el-menu-item index="/contexts">竞赛区</el-menu-item>
+      <el-menu-item index="/forum">讨论区</el-menu-item>
+
       <el-submenu v-if="login_flag" class="sub_menu" index="/account">
         <template #title>您好，{{username}}</template>
         <el-menu-item index="/account">个人中心</el-menu-item>
+        <el-menu-item v-if="identity === '竞赛发布者'" index="/">竞赛管理</el-menu-item>
         <el-menu-item index="/login" @click="logout()"> 退出登录</el-menu-item>
       </el-submenu>
       <el-menu-item v-else index="/login">您还未登录，马上去登录</el-menu-item>
@@ -15,7 +18,9 @@
 </template>
 
 <script>
+import {Auth} from '../mixins'
 export default {
+  mixins: [Auth],
   name: "NavBar",
   props: {
     msg: String,
@@ -23,39 +28,12 @@ export default {
   data() {
     return {
       activeIndex: "/problems",
-      user_id: sessionStorage.user_id || localStorage.user_id,
-      token: sessionStorage.token || localStorage.token,
 
-      username: '',
-
-      login_flag: false,
     };
   },
   created() {
     // 判断用户登录状态
-    if (this.user_id && this.token) {
-      this.$axios.get(this.$host + "/api/v1/user/", {
-      // 向后端传递 JWT token 的方法
-      headers: {
-        'Authorization': 'JWT ' + this.token
-      },
-      responseType: 'json'
-      }).then(response => {
-        console.log(response.data)
-        this.username = response.data.username
-        this.login_flag = true
-
-        // 设置值
-        this.problem_cnt = response.data['participant']['solved_problems'].length
-
-        // this.context_cnt = 1
-        // this.total_context_cnt = 2
-      }).catch(error => {
-
-      });
-    } else {
-      this.login_flag = false
-    }
+    this.login()
   },
   watch: {
     $route(to, from) {
@@ -73,13 +51,7 @@ export default {
     handleSelect(key, keyPath) {
       this.$router.push(key);
     },
-    // 退出登录
-    logout() {
-      if (this.login_flag === true) {
-        sessionStorage.clear();
-        localStorage.clear();
-      }
-    }
+
   },
 };
 </script>

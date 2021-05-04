@@ -24,9 +24,9 @@ body {
     height: 450px;
     /* background-color: #232323; */
     background-color: rgba( 70, 130, 180, 0.6);
-    box-shadow: rgb(0 0 0 / 17%) 13px 15px 13px 2px;
+    box-shadow: rgba(0 0 0 .17) 13px 15px 13px 2px;
     border-radius: 15px;
-    margin: 0px 43px;
+    margin: 0 43px;
 }
 
 .card::before {
@@ -91,7 +91,7 @@ body {
 }
 
 .card:hover .selector {
-    height: 160px;
+    height: 150px;
 }
 
 .selector h2 {

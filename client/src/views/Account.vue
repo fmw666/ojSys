@@ -61,13 +61,12 @@
 </template>
 
 <script>
+import {Auth} from '../components/mixins'
 export default {
   name: "account",
+  mixins: [Auth],
   data() {
     return {
-      user_id: sessionStorage.user_id || localStorage.user_id,
-      token: sessionStorage.token || localStorage.token,
-      username: '',
       mobile: '',
       email: '',
       email_active: false,

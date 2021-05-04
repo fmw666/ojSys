@@ -5,7 +5,7 @@
 
       <el-form-item label="用户名/手机号" prop="username">
         <el-input type="text" v-model="username" autocomplete="off"></el-input>
-        <el-alert v-show="error_username" title="请输入5-20个字符的用户名" type="warning" ></el-alert>
+        <el-alert v-show="error_username" title="请输入3-20个字符的用户名" type="warning" ></el-alert>
       </el-form-item>
 
       <el-form-item label="密码" prop="pass">
@@ -54,7 +54,7 @@
         handler(old_val, new_val) {
           const len = this.username.length;
           if (len > 0) {
-            this.error_username = len < 5 || len > 20;
+            this.error_username = len < 3 || len > 20;
           } else if (len === 0) {
             this.error_username = false
           }

@@ -70,12 +70,14 @@
           <span v-else>
             <span class="demonstration order_tag" @click="on_sort('header')" :class="ordering==='header'?'active':''">难度<i class="el-icon-arrow-up el-icon--right"></i></span>
           </span>
+
+          <el-tag style="float: right; margin-top: -4px; background-color: white; cursor: pointer">题目总数：{{total_problem_cnt}}</el-tag>
         </div>
 
         <el-divider style="width: 160px; margin: 15px 0"></el-divider>
 
         <transition-group>
-          <el-card v-if="count > 0" v-for="problem in problems" :key="problem.id" @click="to_path(problem.id)" class="items" shadow="hover">
+          <el-card v-if="count > 0" v-for="problem in problems" :key="problem.id" @click="to_path('/problems/' + problem.id)" class="items" shadow="hover">
             <h4 style="display: inline">{{ problem.id + ". " + problem.name }}</h4>
             <span class="headers">{{ problem.header }}</span>
             <div class="tips">
@@ -107,13 +109,17 @@
       </el-card>
     </div>
 
+    <el-backtop :visibility-height="0"></el-backtop>
+
   </div>
 </template>
 
 <script>
+import {Base} from '../components/mixins'
 import {ElMessage} from "element-plus";
 
 export default {
+  mixins: [Base],
   data() {
     return {
       page: 1,  // 当前页数
@@ -123,38 +129,39 @@ export default {
       header_sort: true, // true 代表顺序，false 代表反序
       count: 0,  // 总数量
       problems: [],  // 数据
+      total_problems: [], // 所有数据，用于展示每个 tag 数目
 
       algs: [
-        { type: 'info', label: '基础 · 0'},
-        { type: 'success', label: '贪心算法 · 2'},
-        { type: '', label: 'DFS/BFS · 6'},
-        { type: 'success', label: '动态规划 · 6'},
-        { type: 'warning', label: '二分法 · 2'},
-        { type: '', label: '最短路径算法 · 4'}
+        { type: 'info', label: '基础'},
+        { type: 'success', label: '贪心算法'},
+        { type: '', label: 'DFS/BFS'},
+        { type: 'success', label: '动态规划'},
+        { type: 'warning', label: '二分法'},
+        { type: '', label: '最短路径算法'}
       ],
 
       ds: [
-        { type: 'info', label: '基础 · 0'},
-        { type: 'success', label: '数组 · 2'},
-        { type: '', label: '链表 · 6'},
-        { type: 'success', label: '栈 · 6'},
-        { type: 'warning', label: '队列 · 2'},
-        { type: '', label: '哈希表 · 4'},
-        { type: 'warning', label: '树 · 6'},
-        { type: 'success', label: '图 · 1'},
+        { type: 'info', label: '基础'},
+        { type: 'success', label: '数组'},
+        { type: '', label: '链表'},
+        { type: 'success', label: '栈'},
+        { type: 'warning', label: '队列'},
+        { type: '', label: '哈希表'},
+        { type: 'warning', label: '树'},
+        { type: 'success', label: '图'},
       ],
 
       firms: [
-        { type: '', label: '浙江大学 · 2'},
-        { type: 'success', label: '阿里巴巴集团 · 1'},
+        { type: '', label: '浙江大学'},
+        { type: 'success', label: '阿里巴巴集团'},
       ],
 
       header: [
-        { type: 'info', label: '入门 · 0'},
-        { type: 'success', label: '简单 · 2'},
-        { type: '', label: '中等 · 6'},
-        { type: 'warning', label: '困难 · 6'},
-        { type: 'danger', label: '特难 · 2'},
+        { type: 'info', label: '入门'},
+        { type: 'success', label: '简单'},
+        { type: '', label: '中等'},
+        { type: 'warning', label: '困难'},
+        { type: 'danger', label: '特难'},
       ],
 
       alg_choose: '', // 选中的名称
@@ -232,7 +239,7 @@ export default {
       } else if (type === 'ds') {
         this.ds_choose =  str.substr(0, reg.exec(str).index)
       } else if (type === 'firm') {
-        this.firm_choose =  str.substr(0, reg.exec(str).index)
+        this.firm_choose =  str
       } else if (type === 'header') {
         this.header_choose =  str.substr(0, reg.exec(str).index)
       }
@@ -246,10 +253,10 @@ export default {
       this.firm_choose = ''
       this.header_choose = ''
       let i;
-      let elements = document.getElementsByClassName('el-tag--dark')
+      let elements = document.getElementsByClassName('el-tag')
       for (i=0; i<elements.length; i++) {
-        elements[i].classList.add('el-tag--light')
-        elements[i].classList.remove('el-tag--dark')
+        elements.item(i).classList.add('el-tag--light')
+        elements.item(i).classList.remove('el-tag--dark')
       }
       this.get_problems()
     },
@@ -262,21 +269,6 @@ export default {
     handleCurrentChange(val) {
       this.page = val;
       this.get_problems()
-    },
-    // 路由跳转
-    to_path(pid) {
-      this.$router.push('/problems/' + pid);
-    },
-    filter(name) {
-      this.$router.push({path: "/problems", query: {alg_type: name}});
-    },
-    get_query_string(name) {
-      const reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
-      const r = window.location.search.substr(1).match(reg);
-      if (r != null) {
-        return decodeURI(r[2])
-      }
-      return null
     },
     get_problems() {
       this.$axios.get(this.$host + "/api/v1/problems/", {
@@ -311,15 +303,57 @@ export default {
         this.ordering = ordering
         this.get_problems()
       }
-    }
+    },
+    // 得到总的 problems
+    get_total_problems() {
+      // 先获取数据
+      this.$axios.get(this.$host + "/api/v1/problems/", {
+        params: {
+          page_size: Number.MAX_SAFE_INTEGER,
+        },
+        responseType: 'json'
+      }).then(response => {
+        console.log(response.data)
+        this.total_problems = response.data.results
+        this.set_values()
+      }).catch(error => {
+        console.log(error.response.data)
+      })
+
+    },
+    // 给每个 tag 设置值
+    set_values() {
+      let i;
+      let lens = this.total_problems.length
+      let alg_cnts = {'基础':0,'贪心算法':0,'DFS/BFS':0,'动态规划':0,'二分法':0,'最短路径算法':0}
+      let ds_cnts = {'基础':0,'数组':0,'链表':0,'栈':0,'队列':0,'哈希表':0,'树':0,'图':0}
+      let header_cnts = {'入门':0,'简单':0,'中等':0,'困难':0,'特难':0}
+      for (i=0; i<lens; i++) {
+        alg_cnts[this.total_problems[i].alg_type] += 1
+        ds_cnts[this.total_problems[i].ds_type] += 1
+        header_cnts[this.total_problems[i].header] += 1
+      }
+
+      for (i=0; i<this.algs.length; i++) {
+        this.algs[i]["label"] = this.algs[i]["label"] + ' · ' + alg_cnts[this.algs[i]["label"]]
+      }
+      for (i=0; i<this.ds.length; i++) {
+        this.ds[i]["label"] = this.ds[i]["label"] + ' · ' + ds_cnts[this.ds[i]["label"]]
+      }
+      for (i=0; i<this.header.length; i++) {
+        this.header[i]["label"] = this.header[i]["label"] + ' · ' + header_cnts[this.header[i]["label"]]
+      }
+    },
   },
   computed: {
 
   },
   mounted() {
-    // this.cat = this.get_query_string('cat')
+    this.get_problems();
 
-    this.get_problems()
+    this.get_total_problems();
+  },
+  created() {
   }
 }
 </script>
@@ -369,8 +403,8 @@ export default {
   margin: 10px 0;
 }
 
-.items > .el-card > .el-card__body {
-  /*padding: 10px; !important;*/
+.items ::v-deep(.el-card) > .el-card__body {
+  padding: 12px 0 12px 20px;
 }
 
 .order_tag {
@@ -390,7 +424,7 @@ export default {
 
 .tip {
   margin-right: 40px;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .pagination {

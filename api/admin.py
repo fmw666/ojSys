@@ -35,7 +35,7 @@ class ParticipantAdmin(admin.ModelAdmin):
 
 @admin.register(Problem)
 class ProblemAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'header', 'ds_type', 'alg_type', 'author', 'create_date']
+    list_display = ['id', 'name', 'header', 'ds_type', 'alg_type', 'author', 'public', 'create_date']
     list_filter = ('author', 'header', 'ds_type', 'alg_type')
 
 

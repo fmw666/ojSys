@@ -133,7 +133,7 @@ body{
 /* 全局滚动条样式 */
 ::-webkit-scrollbar {
   /*滚动条整体样式*/
-  width : 10px;  /*高宽分别对应横竖滚动条的尺寸*/
+  width : 8px;  /*高宽分别对应横竖滚动条的尺寸*/
   height: 1px;
   cursor: pointer;
 }
@@ -152,16 +152,18 @@ body{
       transparent 75%,
       transparent
   );
+
 }
 ::-webkit-scrollbar-track {
   /*滚动条里面轨道*/
   box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
   background   : #ededed;
   border-radius: 10px;
+
 }
 /* element滚动条的宽度 */
 .el-table__body-wrapper::-webkit-scrollbar {
-  width : 10px;  /*高宽分别对应横竖滚动条的尺寸*/
+  width : 8px;  /*高宽分别对应横竖滚动条的尺寸*/
   height: 1px;
   cursor: pointer;
 }
@@ -180,5 +182,6 @@ body{
       transparent 75%,
       transparent
   );
+
 }
 </style>

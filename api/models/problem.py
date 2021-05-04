@@ -48,6 +48,9 @@ for i in range(len(data_in_lst)):
     id = models.IntegerField(verbose_name='题号', primary_key=True)
     name = models.CharField(verbose_name='题目名称', max_length=100)
     message = models.TextField(verbose_name='题目描述信息', blank=False)
+    input_example = models.TextField(verbose_name='输入样例', blank=True)
+    output_example = models.TextField(verbose_name='输出样例', blank=True)
+    challenge = models.TextField(verbose_name='挑战', blank=True)
 
     alg_type = models.CharField(verbose_name='算法类型', max_length=1, choices=ALG_CHOICES, default='b')
     ds_type = models.CharField(verbose_name='数据结构类型', max_length=1, choices=DS_CHOICES, default='b')
@@ -55,6 +58,8 @@ for i in range(len(data_in_lst)):
     header = models.CharField(verbose_name='难度', max_length=1, choices=HEADER_CHOICES, default='a')
 
     author = models.ForeignKey(User, verbose_name='题目作者', on_delete=models.DO_NOTHING, related_name='题目作者')
+    public = models.BooleanField(default=True, verbose_name='是否公开')
+
     init_code = models.TextField(verbose_name='题目初始化显示', default=init_str)
     test_code = models.TextField(verbose_name='题目测试代码文本部分', default=test_str)
 

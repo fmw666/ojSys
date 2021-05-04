@@ -26,11 +26,11 @@ class CreateUserSerializer(serializers.ModelSerializer):
         # 修改字段选项
         extra_kwargs = {
             'username': {
-                'min_length': 5,
+                'min_length': 3,
                 'max_length': 20,
                 # 'error_message': {
-                #     'min_length': '仅允许 5-20 个字符的用户名',
-                #     'max_length': '仅允许 5-20 个字符的用户名'
+                #     'min_length': '仅允许 3-20 个字符的用户名',
+                #     'max_length': '仅允许 3-20 个字符的用户名'
                 # }
             },
             'password': {
@@ -110,13 +110,17 @@ class UserDetailSerializer(serializers.ModelSerializer):
         # fields = '__all__'
         exclude = ['password']
 
-    # is_ps = serializers.BooleanField(source="is_p")
     participant = serializers.SerializerMethodField()
 
     @staticmethod
     def get_participant(obj):
-        participant_data = ParticipantDetailSerializer(obj.participant).data
-        return participant_data
+        try:
+            # 普通用户才有刷题
+            participant_data = ParticipantDetailSerializer(obj.participant).data
+            return participant_data
+        except:
+            # 其他用户无
+            return None
 
 
 class EmailSerializer(serializers.ModelSerializer):

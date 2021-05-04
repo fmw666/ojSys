@@ -78,8 +78,8 @@ export default {
       handler(old_val, new_val) {
         const len = this.username.length;
         if (len > 0) {
-          if (len<5 || len>20) {
-            this.error_name_message = '请输入5-20个字符的用户名'
+          if (len<3 || len>20) {
+            this.error_name_message = '请输入3-20个字符的用户名'
             this.error_name = true;
           } else {
             this.error_name = false;
