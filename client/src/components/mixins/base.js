@@ -2,12 +2,12 @@ export default {
   data() {
     return {
       total_problem_cnt: 0,
-      total_context_cnt: 0,
+      total_contest_cnt: 0,
     }
   },
   mounted() {
     this.get_problem_cnt();
-    this.get_context_cnt();
+    this.get_contest_cnt();
 
   },
 
@@ -37,12 +37,12 @@ export default {
         console.log(error.response.data)
       })
     },
-    // 获取 context cnt
-    get_context_cnt() {
-      this.$axios.get(this.$host + "/api/v1/contexts/", {
+    // 获取 contest cnt
+    get_contest_cnt() {
+      this.$axios.get(this.$host + "/api/v1/contests/", {
         responseType: 'json'
       }).then(response => {
-        this.total_context_cnt = response.data.count
+        this.total_contest_cnt = response.data.count
       }).catch(error => {
         console.log(error.response.data)
       })

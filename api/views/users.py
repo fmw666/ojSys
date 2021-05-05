@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
-from ..models.users import User
+from ..models.user.user import User
 from ..serializers.users import CreateUserSerializer, UserDetailSerializer, EmailSerializer
 
 

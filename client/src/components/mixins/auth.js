@@ -50,8 +50,8 @@ export default {
 
           this.problem_cnt = response.data['participant']['solved_problems'].length
 
-          // this.context_cnt = 1
-          // this.total_context_cnt = 2
+          // this.contest_cnt = 1
+          // this.total_contest_cnt = 2
         }).catch(error => {
 
         });

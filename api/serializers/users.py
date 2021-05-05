@@ -3,7 +3,8 @@ import re
 from django_redis import get_redis_connection
 from rest_framework_jwt.settings import api_settings
 
-from ..models.users import User, Participant
+from ..models.user.user import User
+from ..models.user.participant import Participant
 from celery_tasks.email.tasks import send_verify_email
 
 

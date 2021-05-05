@@ -2,8 +2,8 @@ import {createRouter, createWebHistory} from 'vue-router'
 import Index from '../views/Index.vue'
 import Problems from '../views/Problems.vue'
 import ProblemDetail from "../views/ProblemDetail.vue";
-import ContextDetail from "../views/ContextDetail.vue"
-import Contexts from '../views/Contexts.vue'
+import ContestDetail from "../views/ContestDetail.vue"
+import Contests from '../views/Contests.vue'
 import Forum from '../views/forum.vue'
 import Login from "../views/Login.vue"
 import Register from "../views/Register.vue"
@@ -39,20 +39,20 @@ const routes = [
     component: ProblemDetail
   },
   {
-    path: '/contexts',
-    name: 'Contexts',
+    path: '/contests',
+    name: 'Contests',
     meta: {
       index: 4,
     },
-    component: Contexts
+    component: Contests
   },
   {
-    path: '/contexts/:id',
-    name: 'Context',
+    path: '/contests/:id',
+    name: 'Contest',
     meta: {
       index: 5,
     },
-    component: ContextDetail
+    component: ContestDetail
   },
   {
     path: '/forum',

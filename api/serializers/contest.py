@@ -1,14 +1,15 @@
 from rest_framework import serializers
 
-from ..models.context import Context
+from ..models.contest import Contest
 
 
-class ContextSerializer(serializers.ModelSerializer):
-    """Context 比赛序列化器"""
+class ContestSerializer(serializers.ModelSerializer):
+    """Contest 比赛序列化器"""
 
     author_username = serializers.CharField(source='author.user')
+    sign_up_start_date = serializers.DateTimeField()
 
     class Meta:
-        model = Context
+        model = Contest
         # field = ['id', 'name', 'message', 'header', 'alg_type', 'ds_type', 'author_username']
         fields = '__all__'

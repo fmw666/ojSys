@@ -313,7 +313,6 @@ export default {
         },
         responseType: 'json'
       }).then(response => {
-        console.log(response.data)
         this.total_problems = response.data.results
         this.set_values()
       }).catch(error => {

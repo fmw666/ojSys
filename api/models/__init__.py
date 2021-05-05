@@ -1,1 +1,1 @@
-from api.models import users
+from api.models.user import user

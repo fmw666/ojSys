@@ -3,7 +3,7 @@ import re
 from django_redis import get_redis_connection
 from rest_framework_jwt.settings import api_settings
 
-from ..models.users import User
+from ..models.user.user import User
 from celery_tasks.email.tasks import send_verify_email
 
 
@@ -44,13 +44,15 @@ class CreateUserSerializer(serializers.ModelSerializer):
             }
         }
 
-    def validate_mobile(self, value):
+    @staticmethod
+    def validate_mobile(value):
         """单独验证手机号"""
         if not re.match(r'1[3-9]\d{9}$', value):
             raise serializers.ValidationError('手机号格式错误')
         return value
 
-    def validated_allow(self, value):
+    @staticmethod
+    def validated_allow(value):
         """是否同意协议"""
         if value != 'true':
             raise serializers.ValidationError('请同意用户协议')

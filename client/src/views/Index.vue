@@ -2,7 +2,7 @@
   <div class="index">
     <div class="content">
 
-      <div @click="toPath('/problems')" class="card">
+      <div @click="to_path('/problems')" class="card">
         <div class="shoebox">
           <img src="../assets/img/题库.png" alt="" />
         </div>
@@ -16,12 +16,12 @@
         </div>
       </div>
 
-      <div class="card" @click="toPath('/contexts')" style="background-color:rgb(	250,128,114)">
+      <div class="card" @click="to_path('/contests')" style="background-color:rgb(	250,128,114)">
         <div class="shoebox">
           <img src="../assets/img/竞赛.png" style="width: 200px" alt="" />
         </div>
         <div class="selector">
-          <h2>competition</h2>
+          <h2>Contest</h2>
           <div class="shoes-size">
             举办方：
             <span>浙江大学、阿里巴巴有限公司等</span>
@@ -47,7 +47,7 @@
             </span>
             <span class="shoes-size">
               比赛：
-              <span>{{problem_cnt}} / {{total_context_cnt}}</span>
+              <span>{{problem_cnt}} / {{total_contest_cnt}}</span>
             </span>
           </div>
           <a href="#" @click="to_path('/account')" class="by-btn">个人中心</a>
@@ -97,8 +97,8 @@ export default {
         // 设置值
         this.problem_cnt = response.data['participant']['solved_problems'].length
 
-        // this.context_cnt = 1
-        // this.total_context_cnt = 2
+        // this.contest_cnt = 1
+        // this.total_contest_cnt = 2
       }).catch(error => {
 
       });

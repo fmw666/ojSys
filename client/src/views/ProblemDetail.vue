@@ -40,7 +40,7 @@
     <div class="text_input">
       <div class="code_text">
 
-        <textarea style="height: 100%; width: 100%" id="code_input" ref="textarea" v-model="code" style="resize: none" rows="40" cols="80" autofocus></textarea>
+        <textarea style="height: 100%; width: 100%; resize: none" id="code_input" ref="textarea" v-model="code" rows="40" cols="80" autofocus></textarea>
       </div>
       <div class="extra">
         <el-button style="float: right" @click="execute" type="primary" icon="el-icon-edit">运行</el-button>
@@ -161,10 +161,6 @@ export default defineComponent({
         }
         this.login_flag = false
       }
-    },
-    handleClose(done) {
-      done()
-      document.getElementById('code_input').focus()
     },
     // 获取 题目 信息
     init_data() {

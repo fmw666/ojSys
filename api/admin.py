@@ -1,8 +1,10 @@
 from django.contrib import admin
 from .models.drf import Article
-from .models.users import CompetitionOrganizer, User, Participant
+from .models.user.user import User
+from .models.user.contestorganizer import ContestOrganizer
+from .models.user.participant import Participant
 from .models.problem import Problem
-from .models.context import Context
+from .models.contest import Contest
 
 
 # Register your models here.
@@ -23,8 +25,8 @@ class UserAdmin(admin.ModelAdmin):
     pass
 
 
-@admin.register(CompetitionOrganizer)
-class CompetitionOrganizerAdmin(admin.ModelAdmin):
+@admin.register(ContestOrganizer)
+class ContestOrganizerAdmin(admin.ModelAdmin):
     pass
 
 
@@ -39,7 +41,7 @@ class ProblemAdmin(admin.ModelAdmin):
     list_filter = ('author', 'header', 'ds_type', 'alg_type')
 
 
-@admin.register(Context)
-class ContextAdmin(admin.ModelAdmin):
-    list_display = ['name', 'author', 'create_date']
+@admin.register(Contest)
+class ContestAdmin(admin.ModelAdmin):
+    list_display = ['name', 'author']
     list_filter = ('author',)

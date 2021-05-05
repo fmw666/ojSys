@@ -247,9 +247,6 @@ export default defineComponent({
         });
       }
     },
-    go_list() {
-      this.$router.push('/problems')
-    },
     // 以下是 OnlineJudgeFE
     onChangeLang (newLang) {
       if (this.problem.template[newLang]) {

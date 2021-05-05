@@ -191,6 +191,9 @@ REST_FRAMEWORK = {
 
     # 分页
     'DEFAULT_PAGINATION_CLASS': 'server.utils.pagination.StandardResultsSetPagination',
+
+    # 日期格式
+    'DATETIME_FORMAT': "%Y年%m月%d日  %H:%M",
 }
 
 AUTH_USER_MODEL = 'api.User'

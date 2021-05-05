@@ -13,7 +13,8 @@ logger = logging.getLogger('django')
 class SMSCodeView(APIView):
     """短信验证码"""
 
-    def get(self, request, mobile):
+    @staticmethod
+    def get(request, mobile):
 
         # 1. 创建 redis 连接对象
         redis_conn = get_redis_connection('verify_codes')

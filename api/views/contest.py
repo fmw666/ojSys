@@ -4,31 +4,32 @@ from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.filters import OrderingFilter
 
-from ..models.context import Context
-from ..serializers.context import ContextSerializer
+from ..models.contest import Contest
+from ..serializers.contest import ContestSerializer
 
 
-class ContextListView(ListAPIView):
+class ContestListView(ListAPIView):
     """例题列表数据查询"""
 
     filter_backends = [OrderingFilter]
     ordering_fields = ['id', ]
 
-    serializer_class = ContextSerializer
+    serializer_class = ContestSerializer
 
     def get_queryset(self):
         # alg_type = self.kwargs.get('alg_type')
         # return Problem.objects.filter(alg_type=alg_type)
-        return Context.objects.all()
+        return Contest.objects.all()
 
 
-class ContextView(APIView):
+class ContestView(APIView):
 
-    def get(self, request, cid):
+    @staticmethod
+    def get(request, cid):
         try:
-            context = Context.objects.get(id=cid)
-        except Context.DoesNotExist:
+            contest = Contest.objects.get(id=cid)
+        except Contest.DoesNotExist:
             raise Http404
 
-        serializer = ContextSerializer(context)
+        serializer = ContestSerializer(contest)
         return Response(serializer.data)

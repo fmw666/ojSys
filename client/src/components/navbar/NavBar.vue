@@ -3,7 +3,7 @@
     <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
       <el-menu-item index="/"><img style="width: 50px" src="../../assets//ico.png" alt=""/></el-menu-item>
       <el-menu-item index="/problems">刷题区</el-menu-item>
-      <el-menu-item index="/contexts">竞赛区</el-menu-item>
+      <el-menu-item index="/contests">竞赛区</el-menu-item>
       <el-menu-item index="/forum">讨论区</el-menu-item>
 
       <el-submenu v-if="login_flag" class="sub_menu" index="/account">
