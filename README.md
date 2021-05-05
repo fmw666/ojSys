@@ -20,7 +20,7 @@ python 依赖包见 requirements.txt
 redis-server --service-install redis.windows-service.conf --loglevel verbose
 redis-server --service-start
 
-1、开启异步定时：
+1、发布异步认为：
 celery -A celery_tasks.main beat -l info
 2、开启异步任务：
 celery -A celery_tasks.main worker -l info

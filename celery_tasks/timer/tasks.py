@@ -1,17 +1,16 @@
 from celery_tasks.main import celery_app
-from celery import shared_task
-
 from api.models.problem import Problem
 
 
-@shared_task
-@celery_app.task(name='set_contest_status')
-def set_contest_status():
+@celery_app.task(name='check_contest_status')
+def check_contest_status():
     """
-    每一分钟进行判断，并设置比赛状态
+    定时检查比赛状态，并设置
     :return:
     """
-    problem = Problem.objects.get(id=1)
-    problem.public = False
-    problem.save()
+
+    # 执行
+    print('我被执行了')
+    Problem.objects.filter(id=1).update(public=False)
+    return 1
 

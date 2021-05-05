@@ -292,3 +292,4 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # django3.2 新增
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+

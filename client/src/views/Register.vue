@@ -38,7 +38,7 @@
         <el-divider></el-divider>
 
         <el-row style="text-align: center; margin-top: 5px;">
-          <el-link class="set_center" @click="toPath('/login')" type="primary">已有帐户？马上登录</el-link>
+          <el-link class="set_center" @click="to_path('/login')" type="primary">已有帐户？马上登录</el-link>
         </el-row>
       </el-form>
     </div>
@@ -46,9 +46,11 @@
 </template>
 
 <script>
+import {Base, Auth} from '../components/mixins'
 import { ElMessage } from 'element-plus'
 export default {
   name: "Register",
+  mixins: [Base, Auth],
   data() {
     return {
 
@@ -60,7 +62,6 @@ export default {
       error_sms_code: false,
       sending_flag: false,
 
-      username: '',
       password: '',
       password2: '',
       mobile: '',
@@ -131,10 +132,6 @@ export default {
     },
   },
   methods: {
-    // 路由跳转
-    toPath(isPath) {
-      this.$router.push(isPath);
-    },
     // 重置表单
     reset() {
       this.username = ''

@@ -21,6 +21,11 @@ class Contest(models.Model):
     contest_start_date = models.DateTimeField(verbose_name='比赛开始时间', help_text='Format is: yyyy-mm-dd hh:mm')
     contest_end_date = models.DateTimeField(verbose_name='比赛结束时间', help_text='Format is: yyyy-mm-dd hh:mm')
 
+    is_no = models.BooleanField(verbose_name='未开始', default=True)
+    is_sign = models.BooleanField(verbose_name='报名中', default=False)
+    is_start = models.BooleanField(verbose_name='已开始', default=False)
+    is_end = models.BooleanField(verbose_name='已结束', default=False)
+
     def clean(self, *args, **kwargs):
         # run the base validation
         super(Contest, self).clean()
