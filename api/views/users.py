@@ -17,8 +17,8 @@ class UserView(CreateAPIView):
 
 class UsernameCountView(APIView):
     """判断用户名是否被注册"""
-
-    def get(self, request, username):
+    @staticmethod
+    def get(request, username):
         # 查询 user 表
         count = User.objects.filter(username=username).count()
 
@@ -34,7 +34,8 @@ class UsernameCountView(APIView):
 
 class MobileCountView(APIView):
     """判断手机号是否被注册"""
-    def get(self, request, mobile):
+    @staticmethod
+    def get(request, mobile):
         # 查询数据库
         count = User.objects.filter(mobile=mobile).count()
         # 构造响应数据
@@ -44,6 +45,20 @@ class MobileCountView(APIView):
         }
         # 响应
         return Response(data)
+
+
+class ForumCountView(APIView):
+    """帖子数量查询"""
+    @staticmethod
+    def get(request, uid):
+        try:
+            # 查询数据库
+            user = User.objects.get(id=uid)
+            count = user.forum_author.all().count()
+            # 响应
+            return Response({'code': 1, 'count': count})
+        except:
+            return Response({'code': 0})
 
 
 class UserDetailView(RetrieveAPIView):
@@ -104,7 +119,8 @@ class EmailView(UpdateAPIView):
 
 class EmailVerifyView(APIView):
     """激活用户邮箱"""
-    def get(self, request):
+    @staticmethod
+    def get(request):
         # 获取前端查询字符串中传入的 token
         token = request.query_params.get('token')
         # 把 token 解密，并查询对应 user

@@ -60,7 +60,7 @@ export default {
 #nav_bar {
   /*display: none !important;*/
   /*width: 1140px;*/
-  width: 60vw;
+  width: 66vw;
   left: 50%;
   transform: translateX(-50%);
   position: fixed;

@@ -1,11 +1,8 @@
-from django.urls import re_path
 from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import drf, verifications, users, judge, problem, contest, forum
+from .views import verifications, users, judge, problem, contest, forum
 
 urlpatterns = [
-    re_path(r'^articles/$', drf.ArticleList.as_view()),
-    re_path(r'^articles/(?P<pk>[0-9]+)$', drf.ArticleDetail.as_view()),
     # 发短信
     url(r'^sms_codes/(?P<mobile>1[3-9]\d{9})/$', verifications.SMSCodeView.as_view()),
     # 注册用户
@@ -16,6 +13,8 @@ urlpatterns = [
     url(r'^users/mobile/(?P<mobile>1[3-9]\d{9})/count/$', users.MobileCountView.as_view()),
     # 获取用户详情
     url(r'^user/$', users.UserDetailView.as_view()),
+    # 判断帖子发的数量
+    url(r'^user/forums/(?P<uid>\d+)/count/$', users.ForumCountView.as_view()),
     # 找回密码
     url(r'^user/forget/$', users.UserPSWForgetView.as_view()),
     # 重设密码
@@ -42,6 +41,8 @@ urlpatterns = [
     url(r'^forums/$', forum.ForumListView.as_view()),
     # 查询论坛帖子例题
     url(r'^forums/(?P<fid>\d+)$', forum.ForumView.as_view()),
+    # 发布论坛帖子例题
+    url(r'^forums/post/(?P<uid>\d+)$', forum.ForumPostView.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

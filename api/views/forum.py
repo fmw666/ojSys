@@ -24,8 +24,9 @@ class ForumListView(ListAPIView):
             from_who = 'all'
         if from_who == 'all':
             return Forum.objects.all()
+        # 热门为，点赞数最多的前10个
         elif from_who == 'hot':
-            return Forum.objects.filter(id=1000)
+            return Forum.objects.all().order_by('-publish_date').order_by('-like_cnt')[:10]
         elif from_who == 'user':
             return Forum.objects.filter(author__is_p=True)
         elif from_who == 'og':
@@ -74,3 +75,18 @@ class ForumView(APIView):
                 return Response({'code': 1})
             except:
                 return Response({'code': 0})
+
+
+class ForumPostView(APIView):
+    @staticmethod
+    def post(request, uid):
+        # 发布帖子
+        try:
+            title = request.data['title']
+            content = request.data['content']
+            user = User.objects.get(id=uid)
+
+            forum = Forum.objects.create(title=title, content=content, author=user)
+            return Response({'code': 1, 'fid': forum.id})
+        except:
+            return Response({'code': 0})

@@ -249,7 +249,7 @@ export default defineComponent({
 
 .container {
   /*width: 1130px;*/
-  width: 60vw;
+  width: 66vw;
   margin: 0 auto;
   padding-top: 120px;
 }

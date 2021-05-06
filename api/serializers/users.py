@@ -107,9 +107,8 @@ class UserDetailSerializer(serializers.ModelSerializer):
     """用户详情序列化器"""
     class Meta:
         model = User
-        # fields = ['id', 'username', 'mobile', 'email', 'email_active', 'is_ps', 'participant']
         # fields = '__all__'
-        exclude = ['password']
+        exclude = ['password', 'groups', 'is_active', 'last_login', 'is_superuser', 'is_staff']
 
     participant = serializers.SerializerMethodField()
 

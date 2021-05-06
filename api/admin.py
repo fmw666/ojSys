@@ -1,5 +1,4 @@
 from django.contrib import admin
-from .models.drf import Article
 from .models.user.user import User
 from .models.user.contestorganizer import ContestOrganizer
 from .models.user.participant import Participant
@@ -9,16 +8,6 @@ from .models.forum import Forum, ForumReply
 
 
 # Register your models here.
-
-
-@admin.register(Article)
-class ArticleAdmin(admin.ModelAdmin):
-    list_display = ('title', 'status', 'create_date')
-    list_filter = ('status',)
-    list_per_page = 10
-
-
-# admin.site.register(Article, ArticleAdmin)
 
 
 @admin.register(User)

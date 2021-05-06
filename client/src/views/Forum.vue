@@ -11,10 +11,11 @@
                 <el-card v-for="forum in forums" :key="forum.id" @click="to_path('/forum/' + forum.id)" class="items" shadow="always" title="点击查看详情">
                   <div class="header">
                     <div class="title">{{forum.title}}</div>
-                    <div class="watch">浏览次数：50</div>
+<!--                    <div class="watch">浏览次数：50</div>-->
+                    <div class="watch">获赞次数：{{forum.like_cnt.length}}</div>
                   </div>
                   <div class="content">{{forum.content}}</div>
-                  <el-divider style="margin: 20px 0 0 0"></el-divider>
+                  <el-divider style="margin: 18px 0 0 0"></el-divider>
                   <div class="tip">
                     发布于：<el-button type="text">{{forum['publish_date']}}</el-button>
 
@@ -58,7 +59,7 @@
             <span style="font-size: 14px; padding-top: 10px;">您的身份：</span><el-tag>{{identity}}</el-tag>
             <el-divider style="margin: 10px 0"></el-divider>
 
-            <span style="font-size: 14px; padding-top: 10px;">发帖数：156</span>
+            <span style="font-size: 14px; padding-top: 10px;">发帖数：{{publish_cnt}}</span>
             <el-button style="position:absolute;right:0;bottom:-8px" @click="to_path('forum_post')" size="small" round type="primary">发布帖子<i class="el-icon-s-promotion el-icon--right"></i></el-button>
 
           </div>
@@ -85,10 +86,11 @@ export default {
 
       page: 1,  // 当前页数
       page_size: 20,  // 每页数量
-      ordering: 'publish_date',  // 排序
+      ordering: '-publish_date',  // 排序
 
       count: 0,  // 总数量
       forums: [],  // 数据
+      publish_cnt: 0,  // 用户发帖数
 
       tabPanes: [
         { label: '🚩 全部主题', name: 'all'},
@@ -114,7 +116,28 @@ export default {
     handleClick() {
       // 设置为第一页
       this.page = 1
+      //
+      if (this.activeName === 'hot') {
+        this.ordering = ''
+      } else {
+        this.ordering = '-publish_date'
+      }
       this.get_forums()
+    },
+
+    // 初始化数据
+    init_data() {
+      this.$axios.get(this.$host + "/api/v1/user/forums/" + this.user_id + '/count', {
+          responseType: 'json'
+        }).then(response => {
+          if (response.data.code === 1) {
+            this.publish_cnt = response.data.count
+          } else {
+            this.publish_cnt = 0
+          }
+        }).catch(error => {
+          console.log(error.response.data)
+        })
     },
 
     // 获取数据
@@ -139,6 +162,7 @@ export default {
   mounted() {
     this.get_forums()
     this.login()
+    this.init_data()
   }
 }
 </script>
@@ -146,7 +170,7 @@ export default {
 <style scoped>
 .container {
   /*width: 1142px;*/
-  width: 60vw;
+  width: 66vw;
   margin: 0 auto;
   padding-top: 110px;
 }
@@ -170,7 +194,7 @@ export default {
 }
 
 .items ::v-deep(.el-card) > .el-card__body {
-  padding: 12px 25px;
+  padding: 12px 25px 8px 25px;
 }
 
 .header {
@@ -206,7 +230,13 @@ export default {
 }
 
 .tip {
+  margin-top: 3px;
   font-size: 14px;
+}
+
+.tip ::v-deep(.el-tag) {
+  height: 30px;
+  line-height: 30px;
 }
 
 .tip .identity {

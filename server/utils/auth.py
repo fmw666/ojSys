@@ -1,7 +1,8 @@
 from django.contrib.auth.backends import ModelBackend
 import re
+from django.contrib.auth import get_user_model
 
-from api.models.drf import User
+User = get_user_model()
 
 
 def jwt_response_payload_handler(token, user=None, request=None):

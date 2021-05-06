@@ -46,7 +46,7 @@ export default {
           } else if (response.data['is_oc'] === true) {
             this.identity = '竞赛发布者'
           }
-
+          console.log(response.data)
 
           this.problem_cnt = response.data['participant']['solved_problems'].length
 
