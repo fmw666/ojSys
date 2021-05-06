@@ -62,7 +62,7 @@
           </span>
         </span>
       </div>
-      <div class="status" style="margin-top: 10px;">
+      <div v-if="msg !== 'ac'" class="status" style="margin-top: 10px;">
         {{msg}}
       </div>
     </div>
@@ -117,13 +117,15 @@ export default defineComponent({
         // 选中文本自动高亮，及高亮方式
         styleSelectedText: true,
         lineWrapping: true,
-        highlightSelectionMatches: {showToken: /\w/, annotateScrollbar: true}
+        highlightSelectionMatches: {showToken: /\w/, annotateScrollbar: true},
+
       },
     }
   },
   mounted() {
     this.login_tip(true)
     this.init_data()
+
   },
   methods: {
     onEditorCodeChange (newCode) {
@@ -236,9 +238,9 @@ export default defineComponent({
 </script>
 
 <style scoped>
-body .el-scrollbar__wrap {
-    overflow-x: hidden;
-}
+/*body .el-scrollbar__wrap {*/
+/*  overflow-x: hidden;*/
+/*}*/
 
 /*css设置默认显示滚动条*/
 .el-scrollbar__bar {
@@ -246,7 +248,8 @@ body .el-scrollbar__wrap {
 }
 
 .container {
-  width: 1130px;
+  /*width: 1130px;*/
+  width: 60vw;
   margin: 0 auto;
   padding-top: 120px;
 }
@@ -254,7 +257,8 @@ body .el-scrollbar__wrap {
 .description {
   display: inline-block;
   width: 50%;
-  height: 500px;
+  /*height: 500px;*/
+  height: 70vh;
 }
 
 .scrollbar {
@@ -311,7 +315,7 @@ body .el-scrollbar__wrap {
 }
 
 .text_input > .code_text {
-  height: 494px;
+  height: 69.4vh;
   width: 100%;
 }
 

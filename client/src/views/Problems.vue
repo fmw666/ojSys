@@ -360,7 +360,8 @@ export default {
 <style scoped>
 
 .container {
-  width: 1142px;
+  /*width: 1142px;*/
+  width: 60vw;
   margin: 0 auto;
   padding-top: 110px;
 }

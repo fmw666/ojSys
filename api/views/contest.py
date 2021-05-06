@@ -17,9 +17,20 @@ class ContestListView(ListAPIView):
     serializer_class = ContestSerializer
 
     def get_queryset(self):
-        # alg_type = self.kwargs.get('alg_type')
-        # return Problem.objects.filter(alg_type=alg_type)
-        return Contest.objects.all()
+        try:
+            status = self.request.query_params['status']
+        except:
+            status = 'sign'
+        if status == 'sign':
+            return Contest.objects.filter(is_sign=True)
+        elif status == 'no':
+            return Contest.objects.filter(is_no=True)
+        elif status == 'end':
+            return Contest.objects.filter(is_end=True)
+        elif status == 'start':
+            return Contest.objects.filter(is_start=True)
+        else:
+            return None
 
 
 class ContestView(APIView):

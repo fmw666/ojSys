@@ -5,6 +5,7 @@ from .models.user.contestorganizer import ContestOrganizer
 from .models.user.participant import Participant
 from .models.problem import Problem
 from .models.contest import Contest
+from .models.forum import Forum, ForumReply
 
 
 # Register your models here.
@@ -45,3 +46,13 @@ class ProblemAdmin(admin.ModelAdmin):
 class ContestAdmin(admin.ModelAdmin):
     list_display = ['name', 'author']
     list_filter = ('author',)
+
+
+@admin.register(Forum)
+class ForumAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(ForumReply)
+class ForumReplyAdmin(admin.ModelAdmin):
+    pass

@@ -12,7 +12,8 @@ class JudgeView(APIView):
     # permission_classes = [IsAuthenticated]
 
     """代码运行"""
-    def post(self, request):
+    @staticmethod
+    def post(request):
 
         pid = request.data['id']
         code = request.data['code']

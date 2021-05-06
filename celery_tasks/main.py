@@ -14,4 +14,4 @@ celery_app = Celery('ojsys', broker="redis://127.0.0.1:6379", backend="redis://1
 celery_app.config_from_object('celery_tasks.config')
 
 # 3. 自动注册异步任务
-# celery_app.autodiscover_tasks(['celery_tasks.sms', 'celery_tasks.email', 'celery_tasks.judge', 'celery_tasks.timer'])
+celery_app.autodiscover_tasks(['celery_tasks.sms', 'celery_tasks.email', 'celery_tasks.judge', 'celery_tasks.timer'])

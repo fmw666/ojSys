@@ -34,15 +34,22 @@ class Problem(models.Model):
     """
     @param a: An integer
     @param b: An integer
-    @return: The sum of a and b
+    @return: The sum of a and b 
     """
-    def function(self, a, b):
+    def aplusb(self, a, b):
         # write your code here
         '''
-    test_str = '''
+    test_str = '''inputs = [[1,2],[100,200],[-3,-1],[0,3]]
+corrects= [3,300,-4,3]
+
+if len(inputs) != len(corrects):
+    raise Exception('题目测试集错误，请联系管理员进行重修审核')
+
 s = Solution()
-for i in range(len(data_in_lst)):
-    assert s.function(data_in_lst[i]) == data_cor_output_lst[i]
+for i in range(len(inputs)):
+    params = inputs[i]
+    if s.aplusb(params[0], params[1]) != corrects[i]:
+        raise Exception('输入值:{0}, {1}. 不等于正确值:{2}'.format(params[0],params[1],corrects[i]))
 '''
 
     id = models.IntegerField(verbose_name='题号', primary_key=True)

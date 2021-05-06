@@ -48,6 +48,7 @@ class ProblemListView(ListAPIView):
             alg = self.request.query_params['alg']
             ds = self.request.query_params['ds']
             firm = self.request.query_params['firm']
+            print(firm)
             header = self.request.query_params['header']
             # 如果都没有
             if not alg and not ds and not firm and not header:
@@ -57,7 +58,7 @@ class ProblemListView(ListAPIView):
                 qs = Problem.objects.filter(public=True)
                 qs = qs.filter(alg_type=ALGS[alg]) if alg in ALGS else qs
                 qs = qs.filter(ds_type=DSS[ds]) if ds in DSS else qs
-                qs = qs.filter(competitionorganizer__user__username=firm) if firm else qs
+                qs = qs.filter(contestorganizer__user__username=firm) if firm else qs
                 qs = qs.filter(header=HEADERS[header]) if header in HEADERS else qs
                 return qs
         except:

@@ -5,7 +5,7 @@
       <div class="header">
         <div class="title">{{name}}</div>
         <el-tag style="margin-left: 20px;">报名剩余时间：{{remain_hours}}:{{remain_minutes}}:{{remain_seconds}}</el-tag>
-        <el-button style="float: right;" type="primary" round>点击报名</el-button>
+        <el-button @click="sign_up" style="float: right;" type="primary" round>点击报名</el-button>
       </div>
 
       <div class="msg" style="margin-top: 10px">开赛时间</div>
@@ -17,7 +17,7 @@
       <div class="content">{{message}}</div>
 
       <div class="msg">奖励</div>
-      <div class="content">{{require}}</div>
+      <div class="content">{{reward}}</div>
 
       <div class="msg">比赛要求</div>
       <div v-if="require" class="content">{{require}}</div>
@@ -31,17 +31,18 @@
 </template>
 
 <script>
-import {Base} from '../components/mixins'
+import {Base, Auth} from '../components/mixins'
 
 import {defineComponent} from 'vue'
+import {ElMessage} from "element-plus";
 
 export default defineComponent({
   name: "ContestDetail",
-  mixins: [Base],
+  mixins: [Base, Auth],
   data() {
     return {
 
-      pid: '',
+      cid: '',
       name: '',
       title: '',
       message: '',
@@ -61,12 +62,12 @@ export default defineComponent({
   },
   mounted() {
     this.init_data()
-
+    this.login()
+    if (this.login_flag === true) {
+      this.sign_up_check()
+    }
   },
   methods: {
-    go_login() {
-      this.$router.push('/login?next=/contests/' + this.pid)
-    },
 
     init_data() {
       this.cid = this.$route.params && this.$route.params.id;
@@ -123,7 +124,34 @@ export default defineComponent({
       this.remain_hours = hours
       this.remain_minutes = minutes
       this.remain_seconds = seconds
-    }
+    },
+
+    // 报名检查
+    sign_up_check() {
+
+    },
+
+    // 点击报名
+    sign_up() {
+      // 未登录
+      if (this.login_flag === false) {
+        this.$confirm('您还未进行登录, 请先登录！', '提示', {
+          confirmButtonText: '去登录',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.to_path('/login?next=/contests/' + this.cid)
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消登录'
+          });
+        });
+        return
+      }
+
+      console.log('登录了')
+    },
   }
 })
 </script>
@@ -131,9 +159,13 @@ export default defineComponent({
 <style scoped>
 
 .container {
-  width: 1130px;
+  /*width: 1130px;*/
+  width: 60vw;
   margin: 0 auto;
   padding-top: 120px;
+}
+.container ::v-deep(.el-card) {
+  padding: 10px 20px;
 }
 .header {
   height: 50px;
@@ -148,5 +180,8 @@ export default defineComponent({
   font-size: 17px;
   font-weight: bold;
   margin: 30px 0 20px 0;
+}
+.content {
+  word-wrap:break-word;
 }
 </style>

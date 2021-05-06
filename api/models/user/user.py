@@ -9,9 +9,19 @@ class User(AbstractUser):
     is_oc = models.BooleanField(default=False, verbose_name='是否 竞赛组织者')
     # Participants
     is_p = models.BooleanField(default=False, verbose_name='是否 参与者')
+    is_admin = models.BooleanField(default=False, verbose_name='是否 管理员')
+
     # mobile
     mobile = models.CharField(max_length=11, unique=True, verbose_name='手机号', default='')
     email_active = models.BooleanField(default=False, verbose_name='邮箱激活状态')
+
+    def clean(self, *args, **kwargs):
+        # run the base validation
+        super(User, self).clean()
+
+        # Don't allow dates older than now.
+        if [self.is_oc, self.is_p, self.is_admin].count(True) > 1:
+            self.is_oc, self.is_p, self.is_admin = False, False, False
 
     class Meta:
         app_label = 'api'

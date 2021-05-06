@@ -5,6 +5,7 @@ from django.db import models
 
 from .problem import Problem
 from .user.contestorganizer import ContestOrganizer
+from .user.user import User
 
 
 class Contest(models.Model):
@@ -25,6 +26,9 @@ class Contest(models.Model):
     is_sign = models.BooleanField(verbose_name='报名中', default=False)
     is_start = models.BooleanField(verbose_name='已开始', default=False)
     is_end = models.BooleanField(verbose_name='已结束', default=False)
+
+    # 报名的人
+    sign_up_user = models.ManyToManyField(User, verbose_name='报名的人')
 
     def clean(self, *args, **kwargs):
         # run the base validation

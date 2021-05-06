@@ -1,7 +1,7 @@
 from django.urls import re_path
 from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import drf, verifications, users, judge, problem, contest
+from .views import drf, verifications, users, judge, problem, contest, forum
 
 urlpatterns = [
     re_path(r'^articles/$', drf.ArticleList.as_view()),
@@ -37,6 +37,11 @@ urlpatterns = [
     url(r'^contests/$', contest.ContestListView.as_view()),
     # 查询单道例题
     url(r'^contests/(?P<cid>\d+)$', contest.ContestView.as_view()),
+
+    # 获取论坛帖子列表
+    url(r'^forums/$', forum.ForumListView.as_view()),
+    # 查询论坛帖子例题
+    url(r'^forums/(?P<fid>\d+)$', forum.ForumView.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

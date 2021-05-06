@@ -9,33 +9,38 @@
 
       <el-card style="width: 100%">
         <el-tabs style="margin: 0 20px" v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="报名中" name="first">
-            <el-card v-for="contest in contests" :key="contest.id" @click="to_path('/contests/' + contest.id)" class="items" shadow="always">
-              <div class="card-left">
-                <h4 class="header">{{contest.name}}</h4>
-                <span class="holder">——主办方：{{contest['author_username']}}</span>
-                <div class="tips">
-                  <div class="tip">正式比赛时间：</div>
-                  <el-tag>{{contest['contest_start_date']}}</el-tag>
-                  <span class="divider-line">--</span>
-                  <el-tag>{{contest['contest_end_date']}}</el-tag>
+
+          <el-tab-pane v-for="tp in tabPanes" :label="tp.label" :name="tp.name">
+
+            <transition-group>
+              <el-card v-for="contest in contests" :key="contest.id" @click="to_path('/contests/' + contest.id)" class="items" shadow="always">
+                <div class="card-left">
+                  <h4 class="header">{{contest.name}}</h4>
+                  <span class="holder">——主办方：{{contest['author_username']}}</span>
+                  <div class="tips">
+                    <div class="tip">正式比赛时间：</div>
+                    <el-tag>{{contest['contest_start_date']}}</el-tag>
+                    <span class="divider-line">--</span>
+                    <el-tag>{{contest['contest_end_date']}}</el-tag>
+                  </div>
                 </div>
-              </div>
 
-              <el-divider direction="vertical" style="height: 30px"></el-divider>
+                <el-divider direction="vertical" style="height: 30px"></el-divider>
 
-              <div class="card-right">
-                <span class="tip">报名开始时间：</span>
-                <el-button type="text" style="padding: 5px">{{contest['sign_up_start_date']}}</el-button>
-                <span class="tip">报名截至时间：</span>
-                <el-button type="text" style="padding: 5px">{{contest['sign_up_end_date']}}</el-button>
+                <div class="card-right">
+                  <span class="tip">报名开始时间：</span>
+                  <el-button type="text" style="padding: 5px">{{contest['sign_up_start_date']}}</el-button>
+                  <span class="tip">报名截至时间：</span>
+                  <el-button type="text" style="padding: 5px">{{contest['sign_up_end_date']}}</el-button>
 
-                <span class="tip" style="margin-top: 7px">当前报名人数：3</span>
-              </div>
+                  <span class="tip" style="margin-top: 7px">当前报名人数：3</span>
+                </div>
 
-            </el-card>
+              </el-card>
+            </transition-group>
 
             <el-pagination
+              v-if="count > 0"
               background
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
@@ -46,50 +51,9 @@
               :total="count"
               class="pagination">
             </el-pagination>
-          </el-tab-pane>
 
-          <el-tab-pane label="未开始" name="second">
-            <el-card v-for="contest in contests" :key="contest.id" @click="to_path('/contests/' + contest.id)" class="items" shadow="always">
-              <h4 style="display: inline">{{contest.name}}</h4>
-              <div class="tips">
-                <span class="tip">主办方：{{contest['author_username']}}</span>
-                <span class="tip">| {{contest['sign_up_start_date']}}</span>
-              </div>
-            </el-card>
+            <el-card v-if="count === 0" style="margin: 30px 0; font-size: 14px; cursor: pointer">暂时还没有相关信息，请下次再来吧~</el-card>
 
-            <el-pagination
-              background
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="page"
-              :page-sizes="[10, 20, 50, 100]"
-              :page-size="10"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="count"
-              class="pagination">
-            </el-pagination>
-          </el-tab-pane>
-
-          <el-tab-pane label="已结束" name="third">
-            <el-card v-for="contest in contests" :key="contest.id" @click="to_path('/contests/' + contest.id)" class="items" shadow="always">
-              <h4 style="display: inline">{{contest.name}}</h4>
-              <div class="tips">
-                <span class="tip">主办方：{{contest['author_username']}}</span>
-                <span class="tip">| {{contest['sign_up_start_date']}}</span>
-              </div>
-            </el-card>
-
-            <el-pagination
-              background
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="page"
-              :page-sizes="[10, 20, 50, 100]"
-              :page-size="10"
-              layout="total, sizes, prev, pager, next, jumper"
-              :total="count"
-              class="pagination">
-            </el-pagination>
           </el-tab-pane>
         </el-tabs>
       </el-card>
@@ -115,8 +79,14 @@ export default {
       count: 0,  // 总数量
       contests: [],  // 数据
 
-      activeName: 'first',
+      activeName: 'sign',
 
+      tabPanes: [
+        { label: '⭐ 报名中', name: 'sign'},
+        { label: '💬 未开始', name: 'no'},
+        { label: '🎈 已结束', name: 'end'},
+        { label: '🚀 进行中', name: 'start'},
+      ]
     };
   },
   methods: {
@@ -131,8 +101,10 @@ export default {
       this.get_contests();
     },
     // 点击 Tabs 标签页触发事件
-    handleClick(tab, event) {
-      console.log(tab, event);
+    handleClick() {
+      // 设置为第一页
+      this.page = 1
+      this.get_contests();
     },
 
     get_contests() {
@@ -140,7 +112,8 @@ export default {
         params: {
           page: this.page,
           page_size: this.page_size,
-          ordering: this.ordering
+          ordering: this.ordering,
+          status: this.activeName
         },
         responseType: 'json'
       }).then(response => {
@@ -180,9 +153,10 @@ export default {
 
 <style scoped>
 .container {
-  width: 1142px;
+  /*width: 1142px;*/
+  width: 60vw;
   margin: 0 auto;
-  padding-top: 140px;
+  padding-top: 110px;
 }
 .container .box-card {
   box-shadow: rgba(0 0 0 .17) 13px 15px 13px 2px;
@@ -193,10 +167,18 @@ export default {
 
       vertical-align: middle;
 }
+.items ::v-deep(.el-card) .el-card__body {
+  position: relative;
+}
 .card-right {
   float: right;
   width: 30%;
-
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+  height: 82px;
 }
 .items {
   cursor: pointer;
@@ -230,5 +212,31 @@ export default {
 
 .pagination {
   margin: 40px 0 0 10px;
+}
+
+/* 列表加载动画 */
+.v-enter-from {
+  opacity: 0;
+  transform: translateY(30px);
+}
+.v-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+.v-enter,.v-leave-to{
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.v-enter-active,.v-leave-active{
+    transition: all 0.8s ease;
+}
+/*v-move 和 v-leave-active 配合使用，能够实现列表后续的元素，渐渐地漂上来的效果 */
+
+.v-move{
+    transition: all 0.8s ease;
+}
+.v-leave-active{
+    position: absolute;
 }
 </style>
