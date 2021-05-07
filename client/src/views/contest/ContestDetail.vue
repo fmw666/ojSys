@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import {Base, Auth} from '../components/mixins'
+import {Base, Auth} from '../../components/mixins'
 
 import {defineComponent} from 'vue'
 import {ElMessage} from "element-plus";

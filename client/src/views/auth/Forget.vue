@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import {Base} from '../components/mixins'
+import {Base} from '../../components/mixins'
 
 import {ElMessage} from "element-plus";
 export default {

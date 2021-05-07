@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import {Base, Auth} from '../components/mixins'
+import {Base, Auth} from '../../components/mixins'
 import {ElMessage} from "element-plus";
 
 export default {

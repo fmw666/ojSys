@@ -95,7 +95,7 @@
 <script>
 // import CodeMirror from "../components/CodeMirror.vue";
 
-import {Auth} from '../components/mixins'
+import {Auth} from '../../components/mixins'
 
 import { defineComponent } from 'vue'
 import { ElMessage } from 'element-plus'

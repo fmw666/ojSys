@@ -1,18 +1,18 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import Index from '../views/Index.vue'
-import Problems from '../views/Problems.vue'
-import ProblemDetail from "../views/ProblemDetail.vue";
-import ContestDetail from "../views/ContestDetail.vue"
-import Contests from '../views/Contests.vue'
-import Forum from '../views/Forum.vue'
-import ForumDetail from '../views/ForumDetail.vue'
-import ForumPost from "../views/ForumPost.vue"
-import Login from "../views/Login.vue"
-import Register from "../views/Register.vue"
-import SRegister from "../views/SRegister.vue";
-import Account from "../views/Account.vue"
-import VerifyEmail from "../views/VerifyEmail.vue"
-import Forget from "../views/Forget.vue"
+import Problems from '../views/problem/Problems.vue'
+import ProblemDetail from "../views/problem/ProblemDetail.vue";
+import ContestDetail from "../views/contest/ContestDetail.vue"
+import Contests from '../views/contest/Contests.vue'
+import Forum from '../views/forum/Forum.vue'
+import ForumDetail from '../views/forum/ForumDetail.vue'
+import ForumPost from "../views/forum/ForumPost.vue"
+import Login from "../views/auth/Login.vue"
+import Register from "../views/auth/Register.vue"
+import SRegister from "../views/auth/SRegister.vue";
+import Account from "../views/account/Account.vue"
+import VerifyEmail from "../views/auth/VerifyEmail.vue"
+import Forget from "../views/auth/Forget.vue"
 
 
 const routes = [
@@ -128,6 +128,11 @@ const routes = [
     },
     component: ForumPost
   },
+  {
+    path: "/:catchAll(.*)",
+    name: "/404",
+    component: () => import('../views/404.vue')
+  }
 ]
 
 const router = createRouter({

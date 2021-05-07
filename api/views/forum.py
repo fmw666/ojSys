@@ -27,7 +27,8 @@ class ForumListView(ListAPIView):
             return Forum.objects.all()
         # 热门为，点赞数最多的前10个
         elif from_who == 'hot':
-            return Forum.objects.all()
+            # return Forum.objects.all()
+            return Forum.objects.all().order_by('-like_cnt', '-publish_date')
         elif from_who == 'user':
             return Forum.objects.filter(author__is_p=True)
         elif from_who == 'og':

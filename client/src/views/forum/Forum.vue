@@ -108,7 +108,7 @@
 </template>
 
 <script>
-import {Base, Auth} from '../components/mixins'
+import {Base, Auth} from '../../components/mixins'
 export default {
   name: "forum",
   mixins: [Base, Auth],

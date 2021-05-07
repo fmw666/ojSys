@@ -88,8 +88,8 @@
                 </div>
               </div>
 
-              <div class="problem_status">
-                状态
+              <div class="problem_status" v-if="problem.status">
+                已通过 <i class="el-icon-check"></i>
               </div>
             </div>
           </el-card>
@@ -123,13 +123,16 @@
 </template>
 
 <script>
-import {Base, Auth} from '../components/mixins'
+import {Base, Auth} from '../../components/mixins'
 import {ElMessage} from "element-plus";
 
 export default {
   mixins: [Base, Auth],
   data() {
     return {
+      user_id: sessionStorage.user_id || localStorage.user_id,
+      token: sessionStorage.token || localStorage.token,
+
       page: 1,  // 当前页数
       page_size: 10,  // 每页数量
       ordering: 'id',  // 排序
@@ -138,8 +141,7 @@ export default {
       count: 0,  // 总数量
       problems: [],  // 数据
       total_problems: [], // 所有数据，用于展示每个 tag 数目
-      // 登录状态判定
-      is_login: false,
+      solved_problems: [],
 
       algs: [
         { type: 'info', label: '基础'},
@@ -296,19 +298,18 @@ export default {
         this.count = response.data.count
         this.problems = response.data.results
 
-        this.if_login()
-        console.log(this.is_login)
         // 如果登录，那就给 problems 设置用户刷题状态
-
+        if (this.problem_solved.length !== 0) {
           this.set_problem_status()
-
+        }
       }).catch(error => {
         console.log(error.response.data)
       })
     },
+    // 设置 problem 状态
     set_problem_status() {
       for (let i=0; i<this.problems.length; i++) {
-        this.problems[i]['status'] = 1
+        this.problems[i]['status'] = this.problem_solved.indexOf(this.problems[i].id) !== -1
       }
     },
     // 点击排序
@@ -365,22 +366,21 @@ export default {
         this.header[i]["label"] = this.header[i]["label"] + ' · ' + header_cnts[this.header[i]["label"]]
       }
     },
-    // 判断是否登录
-    if_login() {
+    login() {
       // 判断用户登录状态
       if (this.user_id && this.token) {
         this.$axios.get(this.$host + "/api/v1/user/", {
-          // 向后端传递 JWT token 的方法
-          headers: {
-            'Authorization': 'JWT ' + this.token
-          },
-          responseType: 'json'
-          }).then(response => {
-            this.is_login = true
-            console.log(this.is_login)
-          })
+        // 向后端传递 JWT token 的方法
+        headers: {
+          'Authorization': 'JWT ' + this.token
+        },
+        responseType: 'json'
+        }).then(response => {
+
+          this.problem_solved = response.data['participant']['solved_problems']
+        })
       }
-    },
+    }
   },
   computed: {
 
@@ -389,8 +389,6 @@ export default {
 
     // 页面第一次加载后再加载数据
     this.login()
-    // 页面加载前加载
-    this.if_login()
 
     this.get_problems();
     this.get_total_problems();
@@ -471,7 +469,9 @@ export default {
 .problem_status {
   align-self: flex-end;
   margin-right: 20px;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #3091f2;
 }
 
 .pagination {

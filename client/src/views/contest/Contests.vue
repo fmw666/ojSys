@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import {Base} from '../components/mixins'
+import {Base} from '../../components/mixins'
 export default {
   mixins: [Base],
   data() {

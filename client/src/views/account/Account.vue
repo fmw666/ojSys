@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import {Auth} from '../components/mixins'
+import {Auth} from '../../components/mixins'
 export default {
   name: "account",
   mixins: [Auth],
@@ -199,13 +199,8 @@ export default {
 
 <style scoped>
 
-.container {
-  width: 1142px;
-  margin: 0 auto;
-}
 .container .box-card {
   position: relative;
-  top: 120px;
   box-shadow: rgba(0 0 0 0.17) 13px 15px 13px 2px;
 }
 .container .box-card ::v-deep(.el-form) .el-input .el-input__inner {
