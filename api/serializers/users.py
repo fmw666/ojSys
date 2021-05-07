@@ -3,6 +3,7 @@ import re
 from django_redis import get_redis_connection
 from rest_framework_jwt.settings import api_settings
 
+from .forum import ForumSerializer
 from ..models.user.user import User
 from ..models.user.participant import Participant
 from celery_tasks.email.tasks import send_verify_email
@@ -110,7 +111,10 @@ class UserDetailSerializer(serializers.ModelSerializer):
         # fields = '__all__'
         exclude = ['password', 'groups', 'is_active', 'last_login', 'is_superuser', 'is_staff']
 
+    # 如果是普通用户可以得到刷题信息
     participant = serializers.SerializerMethodField()
+    # 所有用户得到发帖信息
+    forum_author = ForumSerializer(many=True)
 
     @staticmethod
     def get_participant(obj):

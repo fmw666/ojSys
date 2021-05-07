@@ -6,6 +6,8 @@ from celery.result import AsyncResult
 from celery_tasks.main import celery_app
 
 from ..models.problem import Problem
+from ..models.user.participant import Participant
+from ..models.user.user import User
 
 
 class JudgeView(APIView):
@@ -15,6 +17,7 @@ class JudgeView(APIView):
     @staticmethod
     def post(request):
 
+        uid = request.data['uid']
         pid = request.data['id']
         code = request.data['code']
 
@@ -30,5 +33,15 @@ class JudgeView(APIView):
             result['output'] = result['output'].split('.py')[1][3:]
             if result['output'].count('不等于正确值'):
                 result['output'] = '答案错误' + result['output'].split('Exception')[-1]
+
+        # 如果通过算法，保存用户记录
+        if result['code'] == 'ac':
+            try:
+                user = User.objects.get(id=uid)
+                p_user = Participant.objects.get(user=user)
+                p_user.solved_problems.add(problem)
+                p_user.save()
+            except:
+                pass
 
         return Response(result)

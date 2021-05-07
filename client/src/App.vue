@@ -53,6 +53,15 @@ body{
   margin: 0 auto;
   -webkit-overflow-scrolling: touch;
 }
+
+/* 公共容器 */
+.container {
+  /*width: 1142px;*/
+  width: 66vw;
+  margin: 0 auto;
+  padding-top: 110px;
+}
+
 .fold-left-enter-active {
   animation-name: fold-left-in;
   animation-duration: .6s;

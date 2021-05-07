@@ -4,7 +4,8 @@
     <el-card>
       <div class="header">
         <div class="title">{{name}}</div>
-        <el-tag style="margin-left: 20px;">报名剩余时间：{{remain_hours}}:{{remain_minutes}}:{{remain_seconds}}</el-tag>
+        <el-tag v-if="status === 0" style="margin-left: 20px;">报名开始时间：{{remain_hours}}:{{remain_minutes}}:{{remain_seconds}}</el-tag>
+        <el-tag v-if="status === 1" style="margin-left: 20px;">报名剩余时间：{{remain_hours}}:{{remain_minutes}}:{{remain_seconds}}</el-tag>
         <el-button @click="sign_up" style="float: right;" type="primary" round>点击报名</el-button>
       </div>
 
@@ -24,6 +25,9 @@
       <div v-else class="content">无</div>
 
     </el-card>
+
+    <el-button style="margin-top: 10px" @click="to_path('/contests')">返回列表</el-button>
+
   </div>
 
   <el-backtop :visibility-height="0"></el-backtop>
@@ -49,6 +53,9 @@ export default defineComponent({
       reward: '',
       require: '',
 
+      status: 0,  // 0未开始报名，1已开始报名，2比赛进行中，3已结束
+
+      sign_up_start_date: '',
       sign_up_end_date: '',
       remain_hours: '',
       remain_minutes: '',
@@ -80,23 +87,52 @@ export default defineComponent({
           this.reward = response.data['reward']
           this.require = response.data['require']
 
+          this.sign_up_start_date = response.data['sign_up_start_date']
           this.sign_up_end_date = response.data['sign_up_end_date']
           this.contest_start_date = response.data['contest_start_date']
           this.contest_end_date = response.data['contest_end_date']
 
-          // 2021年05月06日  05:54
-          let new_time = this.sign_up_end_date.replace('年', '-')
-          new_time = new_time.replace('月', '-').replace('日', '')
-          new_time += ':00'
-          // date like: 2021-05-12 12:15:12
-          let end = new Date(new_time)
+          // 0未开始报名，1已开始报名，2比赛进行中，3已结束
+          if (response.data['is_no']) {
+            this.status = 0
+          } else if (response.data['is_sign']) {
+            this.status = 1
+          } else if (response.data['is_on']) {
+            this.status = 2
+          } else if (response.data['is_end']) {
+            this.status = 3
+          }
 
-          this.difference(new Date(), end)
+          let time
+          // 未开始报名
+          if (this.status === 0) {
+            let new_time = this.sign_up_start_date.replace('年', '-')
+            new_time = new_time.replace('月', '-').replace('日', '')
+            new_time += ':00'
+            time = new Date(new_time)
+            this.difference(new Date(), time)
+          }
+          // 开始报名
+          else if (this.status === 1) {
+            // 2021年05月06日  05:54
+            let new_time = this.sign_up_end_date.replace('年', '-')
+            new_time = new_time.replace('月', '-').replace('日', '')
+            new_time += ':00'
+            // date like: 2021-05-12 12:15:12
+            time = new Date(new_time)
+            this.difference(new Date(), time)
+          }
 
+          // 结束了的话，就不用了倒计时了
+          if (this.status === 3) {
+            return
+          }
           let timer = setInterval(() => {
-            this.difference(new Date(), end)
-            if (this.remain_hours === 0 && this.remain_minutes === 0 && this.remain_seconds === 0) {
+            this.difference(new Date(), time)
+            console.log(this.remain_hours)
+            if (this.remain_hours <= 0 || this.remain_minutes <= 0 || this.remain_seconds <= 0) {
               // 如果结束报名
+              this.$axios.get(this.$host + "/api/v1/cron/contests")
               clearInterval(timer)
             }
           }, 1000)
@@ -158,12 +194,6 @@ export default defineComponent({
 
 <style scoped>
 
-.container {
-  /*width: 1130px;*/
-  width: 66vw;
-  margin: 0 auto;
-  padding-top: 120px;
-}
 .container ::v-deep(.el-card) {
   padding: 10px 20px;
 }

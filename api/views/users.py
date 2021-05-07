@@ -47,20 +47,6 @@ class MobileCountView(APIView):
         return Response(data)
 
 
-class ForumCountView(APIView):
-    """帖子数量查询"""
-    @staticmethod
-    def get(request, uid):
-        try:
-            # 查询数据库
-            user = User.objects.get(id=uid)
-            count = user.forum_author.all().count()
-            # 响应
-            return Response({'code': 1, 'count': count})
-        except:
-            return Response({'code': 0})
-
-
 class UserDetailView(RetrieveAPIView):
     """用户详细信息展示"""
     serializer_class = UserDetailSerializer

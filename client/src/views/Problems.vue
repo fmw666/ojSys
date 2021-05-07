@@ -78,11 +78,19 @@
 
         <transition-group>
           <el-card v-if="count > 0" v-for="problem in problems" :key="problem.id" @click="to_path('/problems/' + problem.id)" class="items" shadow="hover">
-            <h4 style="display: inline">{{ problem.id + ". " + problem.name }}</h4>
-            <span class="headers">{{ problem.header }}</span>
-            <div class="tips">
-              <span class="tip">算法类型：{{ problem.alg_type }}</span>
-              <span class="tip">数据结构：{{ problem.ds_type }}</span>
+            <div class="problem_container">
+              <div class="problem_info">
+                <h4 style="display: inline">{{ problem.id + ". " + problem.name }}</h4>
+                <span class="headers">{{ problem.header }}</span>
+                <div class="tips">
+                  <span class="tip">算法类型：{{ problem['alg_type'] }}</span>
+                  <span class="tip">数据结构：{{ problem['ds_type'] }}</span>
+                </div>
+              </div>
+
+              <div class="problem_status">
+                状态
+              </div>
             </div>
           </el-card>
         </transition-group>
@@ -115,11 +123,11 @@
 </template>
 
 <script>
-import {Base} from '../components/mixins'
+import {Base, Auth} from '../components/mixins'
 import {ElMessage} from "element-plus";
 
 export default {
-  mixins: [Base],
+  mixins: [Base, Auth],
   data() {
     return {
       page: 1,  // 当前页数
@@ -130,6 +138,8 @@ export default {
       count: 0,  // 总数量
       problems: [],  // 数据
       total_problems: [], // 所有数据，用于展示每个 tag 数目
+      // 登录状态判定
+      is_login: false,
 
       algs: [
         { type: 'info', label: '基础'},
@@ -285,9 +295,21 @@ export default {
       }).then(response => {
         this.count = response.data.count
         this.problems = response.data.results
+
+        this.if_login()
+        console.log(this.is_login)
+        // 如果登录，那就给 problems 设置用户刷题状态
+
+          this.set_problem_status()
+
       }).catch(error => {
         console.log(error.response.data)
       })
+    },
+    set_problem_status() {
+      for (let i=0; i<this.problems.length; i++) {
+        this.problems[i]['status'] = 1
+      }
     },
     // 点击排序
     on_sort(ordering) {
@@ -328,8 +350,8 @@ export default {
       let ds_cnts = {'基础':0,'数组':0,'链表':0,'栈':0,'队列':0,'哈希表':0,'树':0,'图':0}
       let header_cnts = {'入门':0,'简单':0,'中等':0,'困难':0,'特难':0}
       for (i=0; i<lens; i++) {
-        alg_cnts[this.total_problems[i].alg_type] += 1
-        ds_cnts[this.total_problems[i].ds_type] += 1
+        alg_cnts[this.total_problems[i]['alg_type']] += 1
+        ds_cnts[this.total_problems[i]['ds_type']] += 1
         header_cnts[this.total_problems[i].header] += 1
       }
 
@@ -343,28 +365,41 @@ export default {
         this.header[i]["label"] = this.header[i]["label"] + ' · ' + header_cnts[this.header[i]["label"]]
       }
     },
+    // 判断是否登录
+    if_login() {
+      // 判断用户登录状态
+      if (this.user_id && this.token) {
+        this.$axios.get(this.$host + "/api/v1/user/", {
+          // 向后端传递 JWT token 的方法
+          headers: {
+            'Authorization': 'JWT ' + this.token
+          },
+          responseType: 'json'
+          }).then(response => {
+            this.is_login = true
+            console.log(this.is_login)
+          })
+      }
+    },
   },
   computed: {
 
   },
   mounted() {
-    this.get_problems();
 
+    // 页面第一次加载后再加载数据
+    this.login()
+    // 页面加载前加载
+    this.if_login()
+
+    this.get_problems();
     this.get_total_problems();
   },
-  created() {
-  }
 }
 </script>
 
-<style scoped>
 
-.container {
-  /*width: 1142px;*/
-  width: 66vw;
-  margin: 0 auto;
-  padding-top: 110px;
-}
+<style scoped>
 
 .container .box-card,
 .container .ranting {
@@ -424,6 +459,18 @@ export default {
 
 .tip {
   margin-right: 40px;
+  font-size: 14px;
+}
+
+.problem_container {
+  display: flex;
+}
+.problem_info {
+  flex: 1;
+}
+.problem_status {
+  align-self: flex-end;
+  margin-right: 20px;
   font-size: 14px;
 }
 

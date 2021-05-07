@@ -12,7 +12,8 @@ from .models.forum import Forum, ForumReply
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['id', 'username', 'is_p', 'is_oc', 'is_admin']
+    list_filter = ('is_p', 'is_oc', 'is_admin')
 
 
 @admin.register(ContestOrganizer)
@@ -39,7 +40,8 @@ class ContestAdmin(admin.ModelAdmin):
 
 @admin.register(Forum)
 class ForumAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['id', 'title', 'author']
+    list_filter = ('author',)
 
 
 @admin.register(ForumReply)

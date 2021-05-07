@@ -191,7 +191,7 @@ export default defineComponent({
       this.login_tip(false)
       if (this.login_flag === true) {
         this.$axios.post(this.$host + "/api/v1/judge/", {
-          user_id: this.user_id,
+          uid: this.user_id,
           id: this.pid,
           code: this.code
         }).then(response => {
@@ -247,12 +247,6 @@ export default defineComponent({
   opacity: 1;
 }
 
-.container {
-  /*width: 1130px;*/
-  width: 66vw;
-  margin: 0 auto;
-  padding-top: 120px;
-}
 
 .description {
   display: inline-block;

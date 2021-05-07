@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
 from .views import verifications, users, judge, problem, contest, forum
+from .crontab.contest import CheckContestStatus
 
 urlpatterns = [
     # 发短信
@@ -13,8 +14,6 @@ urlpatterns = [
     url(r'^users/mobile/(?P<mobile>1[3-9]\d{9})/count/$', users.MobileCountView.as_view()),
     # 获取用户详情
     url(r'^user/$', users.UserDetailView.as_view()),
-    # 判断帖子发的数量
-    url(r'^user/forums/(?P<uid>\d+)/count/$', users.ForumCountView.as_view()),
     # 找回密码
     url(r'^user/forget/$', users.UserPSWForgetView.as_view()),
     # 重设密码
@@ -36,6 +35,8 @@ urlpatterns = [
     url(r'^contests/$', contest.ContestListView.as_view()),
     # 查询单道例题
     url(r'^contests/(?P<cid>\d+)$', contest.ContestView.as_view()),
+    # 定时任务
+    url(r'^cron/contests/$', CheckContestStatus.as_view()),
 
     # 获取论坛帖子列表
     url(r'^forums/$', forum.ForumListView.as_view()),
@@ -43,6 +44,8 @@ urlpatterns = [
     url(r'^forums/(?P<fid>\d+)$', forum.ForumView.as_view()),
     # 发布论坛帖子例题
     url(r'^forums/post/(?P<uid>\d+)$', forum.ForumPostView.as_view()),
+
+
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

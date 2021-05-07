@@ -71,6 +71,7 @@ export default {
   mixins: [Base],
   data() {
     return {
+
       page: 1,  // 当前页数
       page_size: 20,  // 每页数量
       ordering: 'id',  // 排序
@@ -152,12 +153,7 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  /*width: 1142px;*/
-  width: 66vw;
-  margin: 0 auto;
-  padding-top: 110px;
-}
+
 .container .box-card {
   box-shadow: rgba(0 0 0 .17) 13px 15px 13px 2px;
 }

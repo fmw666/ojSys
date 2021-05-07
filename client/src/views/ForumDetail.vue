@@ -35,6 +35,8 @@
       </div>
 
     </el-card>
+
+    <el-button style="margin-top: 50px" @click="to_path('/forum')" icon="el-icon-arrow-left">返回列表</el-button>
   </div>
 
   <el-backtop :visibility-height="0"></el-backtop>
@@ -171,12 +173,6 @@ export default defineComponent({
 
 <style scoped>
 
-.container {
-  /*width: 1130px;*/
-  width: 66vw;
-  margin: 0 auto;
-  padding-top: 120px;
-}
 .container ::v-deep(.el-card) {
   padding: 10px 20px;
 }

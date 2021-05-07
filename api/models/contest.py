@@ -28,15 +28,15 @@ class Contest(models.Model):
     is_end = models.BooleanField(verbose_name='已结束', default=False)
 
     # 报名的人
-    sign_up_user = models.ManyToManyField(User, verbose_name='报名的人')
+    sign_up_user = models.ManyToManyField(User, verbose_name='报名的人', blank=True)
 
     def clean(self, *args, **kwargs):
         # run the base validation
         super(Contest, self).clean()
 
         # Don't allow dates older than now.
-        if self.sign_up_start_date < datetime.datetime.now().replace(tzinfo=pytz.timezone('UTC')):
-            self.sign_up_start_date = datetime.datetime.now().replace(tzinfo=pytz.timezone('UTC'))
+        if self.sign_up_start_date < datetime.datetime.now():
+            self.sign_up_start_date = datetime.datetime.now()
         if self.sign_up_end_date < self.sign_up_start_date:
             self.sign_up_end_date = self.sign_up_start_date
         if self.contest_start_date < self.sign_up_end_date:

@@ -85,10 +85,5 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  /*width: 1130px;*/
-  width: 66vw;
-  margin: 0 auto;
-  padding-top: 120px;
-}
+
 </style>

@@ -22,11 +22,12 @@ class ForumListView(ListAPIView):
             from_who = self.request.query_params['from']
         except:
             from_who = 'all'
+
         if from_who == 'all':
             return Forum.objects.all()
         # 热门为，点赞数最多的前10个
         elif from_who == 'hot':
-            return Forum.objects.all().order_by('-publish_date').order_by('-like_cnt')[:10]
+            return Forum.objects.all()
         elif from_who == 'user':
             return Forum.objects.filter(author__is_p=True)
         elif from_who == 'og':

@@ -12,7 +12,7 @@
                   <div class="header">
                     <div class="title">{{forum.title}}</div>
 <!--                    <div class="watch">浏览次数：50</div>-->
-                    <div class="watch">获赞次数：{{forum.like_cnt.length}}</div>
+                    <div class="watch">获赞次数：{{forum['like_cnt'].length}}</div>
                   </div>
                   <div class="content">{{forum.content}}</div>
                   <el-divider style="margin: 18px 0 0 0"></el-divider>
@@ -40,8 +40,8 @@
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
                 :current-page="page"
-                :page-sizes="[10, 20, 50, 100]"
-                :page-size="10"
+                :page-sizes="[5, 10, 20, 50]"
+                :page-size="5"
                 layout="total, sizes, prev, pager, next, jumper"
                 :total="count"
                 class="pagination">
@@ -59,12 +59,44 @@
             <span style="font-size: 14px; padding-top: 10px;">您的身份：</span><el-tag>{{identity}}</el-tag>
             <el-divider style="margin: 10px 0"></el-divider>
 
-            <span style="font-size: 14px; padding-top: 10px;">发帖数：{{publish_cnt}}</span>
-            <el-button style="position:absolute;right:0;bottom:-8px" @click="to_path('forum_post')" size="small" round type="primary">发布帖子<i class="el-icon-s-promotion el-icon--right"></i></el-button>
-
+            <div class="under">
+              <div class="statistics">
+                <span>发帖总数：{{forum_post.length}}</span>
+                <span style="margin-left: 20px">获赞总数：{{like_cnt}}</span>
+              </div>
+              <el-button class="publish_btn" @click="to_path('forum_post')" size="small" round type="primary">发布帖子<i class="el-icon-s-promotion el-icon--right"></i></el-button>
+            </div>
           </div>
           <div v-else style="float: right; margin: 10px 20px 0 0">
             <el-tag style="cursor:pointer;" @click="to_path('/login?next=/forum')">您还未登录</el-tag>
+          </div>
+
+          <div v-if="login_flag" class="history">
+            💬 您的历史发帖
+
+            <div class="example">
+              <div class="example_title">标题</div>
+              <div class="example_bottom">
+                <div class="example_date">发布日期</div>
+                <div class="example_like">获赞数</div>
+              </div>
+            </div>
+            <el-divider style="margin: 0"></el-divider>
+
+
+            <div @click="to_path('/forum/' + data.id)" class="show" v-for="data in forum_post.slice(0, 10)">
+              <div style="font-size: 14px; font-weight: bold">{{data.title}}</div>
+              <div class="example_bottom">
+                <div style="color: rgb(64,188,255);font-size: 13px" class="example_date">{{data['publish_date']}}</div>
+                <div class="example_like">{{data['like_cnt'].length}}</div>
+              </div>
+
+              <el-divider style="margin: 0"></el-divider>
+            </div>
+            <div class="show_tips" v-if="forum_post.length > 10">
+              仅展示最近十条，剩余可在个人中心查看
+            </div>
+
           </div>
         </div>
       </el-card>
@@ -85,12 +117,11 @@ export default {
       activeName: 'all',
 
       page: 1,  // 当前页数
-      page_size: 20,  // 每页数量
+      page_size: 10,  // 每页数量
       ordering: '-publish_date',  // 排序
 
       count: 0,  // 总数量
       forums: [],  // 数据
-      publish_cnt: 0,  // 用户发帖数
 
       tabPanes: [
         { label: '🚩 全部主题', name: 'all'},
@@ -125,21 +156,6 @@ export default {
       this.get_forums()
     },
 
-    // 初始化数据
-    init_data() {
-      this.$axios.get(this.$host + "/api/v1/user/forums/" + this.user_id + '/count', {
-          responseType: 'json'
-        }).then(response => {
-          if (response.data.code === 1) {
-            this.publish_cnt = response.data.count
-          } else {
-            this.publish_cnt = 0
-          }
-        }).catch(error => {
-          console.log(error.response.data)
-        })
-    },
-
     // 获取数据
     get_forums() {
       this.$axios.get(this.$host + "/api/v1/forums/", {
@@ -162,18 +178,11 @@ export default {
   mounted() {
     this.get_forums()
     this.login()
-    this.init_data()
   }
 }
 </script>
 
 <style scoped>
-.container {
-  /*width: 1142px;*/
-  width: 66vw;
-  margin: 0 auto;
-  padding-top: 110px;
-}
 
 .main {
   margin-left: 10px;
@@ -247,6 +256,60 @@ export default {
 }
 .pagination {
   margin: 40px 0 0 10px;
+}
+
+.history {
+  margin: 60px 0 20px 0;
+}
+
+.under {
+  display: flex;
+}
+.statistics {
+  font-size: 14px;
+  margin-top: 5px;
+  flex: 1;
+  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-all;
+  height: 22px;
+  vertical-align: center;
+}
+
+
+.example {
+  margin: 20px 0 10px;
+  font-size: 14px;
+  color: rgb(144, 147, 153);
+  font-weight: bold;
+}
+.example_bottom {
+  display: flex;
+}
+.example_date {
+  flex: 1;
+}
+
+.show {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  word-break: break-all;
+  line-height: 23px;
+  font-size: 14px;
+  color: rgb(96, 98, 102);
+  cursor: pointer;
+  margin: 20px 0;
+}
+.show:hover {
+
+}
+.show_tips {
+  margin-top: 30px;
+  color: rgb(64, 158, 255);
+  font-size: 14px;
+  text-align: center;;
+  /*border-bottom: 1px solid rgb(64, 158, 255);*/
 }
 
 /* 列表加载动画 */
