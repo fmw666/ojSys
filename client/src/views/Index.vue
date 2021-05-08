@@ -53,7 +53,7 @@
           <a href="#" @click="to_path('/account')" class="by-btn">个人中心</a>
         </div>
         <div v-else class="selector">
-          <h2>Personal Center</h2>
+          <h2>个人中心</h2>
           <a href="#" @click="to_path('/login')" class="by-btn">Sign in</a>
           <a href="#" @click="to_path('/register')" class="by-btn">Sign up</a>
         </div>

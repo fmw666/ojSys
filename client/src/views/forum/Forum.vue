@@ -117,7 +117,7 @@ export default {
       activeName: 'all',
 
       page: 1,  // 当前页数
-      page_size: 10,  // 每页数量
+      page_size: 5,  // 每页数量
       ordering: '-publish_date',  // 排序
 
       count: 0,  // 总数量
@@ -174,10 +174,25 @@ export default {
       })
     },
 
+    get_my_forums() {
+      if (this.user_id && this.token) {
+        this.$axios.get(this.$host + "/api/v1/user/", {
+        // 向后端传递 JWT token 的方法
+        headers: {
+          'Authorization': 'JWT ' + this.token
+        },
+        responseType: 'json'
+        }).then(response => {
+          // 加载用户数据
+          this.forum_post = response.data['forum_author']
+        })
+      }
+    }
   },
   mounted() {
     this.get_forums()
     this.login()
+    this.get_my_forums()
   }
 }
 </script>

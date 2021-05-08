@@ -37,6 +37,7 @@
       </div>
     </div>
 
+
     <div class="text_input">
       <div class="code_text">
 
@@ -79,9 +80,7 @@ import { ElMessage } from 'element-plus'
 export default defineComponent({
   name: "ProblemPage",
   mixins: [Base, Auth],
-  components: {
 
-  },
   data() {
     return {
       code: '',
@@ -104,22 +103,6 @@ export default defineComponent({
       result: '',
       msg: '',
 
-      options: {
-        // codemirror options
-        tabSize: 4,
-        mode: 'text/x-csrc',
-        theme: 'solarized',
-        lineNumbers: true,
-        line: true,
-        // 代码折叠
-        foldGutter: true,
-        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
-        // 选中文本自动高亮，及高亮方式
-        styleSelectedText: true,
-        lineWrapping: true,
-        highlightSelectionMatches: {showToken: /\w/, annotateScrollbar: true},
-
-      },
     }
   },
   mounted() {
@@ -230,6 +213,7 @@ export default defineComponent({
         });
       }
     },
+
 
   },
   computed: {

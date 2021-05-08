@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.http import Http404
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
@@ -5,8 +6,8 @@ from rest_framework.views import APIView
 from rest_framework.filters import OrderingFilter
 
 from ..models.problem import Problem
+from ..models.user.participant import Participant
 from ..serializers.problem import ProblemSerializer
-
 
 ALGS = {
     '基础': 'b',
@@ -66,7 +67,6 @@ class ProblemListView(ListAPIView):
 
 
 class ProblemView(APIView):
-
     @staticmethod
     def get(request, pid):
         try:
@@ -76,3 +76,11 @@ class ProblemView(APIView):
 
         serializer = ProblemSerializer(problem)
         return Response(serializer.data)
+
+
+# 排名情况
+class RankingView(APIView):
+
+    @staticmethod
+    def get(request):
+        return Response(Participant.objects.values('user__username').annotate(Count('solved_problems')))

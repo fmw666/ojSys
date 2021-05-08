@@ -1,6 +1,5 @@
 import datetime
 
-import pytz
 from django.db import models
 
 from .problem import Problem

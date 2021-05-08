@@ -86,7 +86,7 @@ export default {
         { label: '⭐ 报名中', name: 'sign'},
         { label: '💬 未开始', name: 'no'},
         { label: '🎈 已结束', name: 'end'},
-        { label: '🚀 进行中', name: 'start'},
+        { label: '🚀 进行中（仅能查看已报名的比赛）', name: 'start'},
       ]
     };
   },

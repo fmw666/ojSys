@@ -106,23 +106,24 @@ class ParticipantDetailSerializer(serializers.ModelSerializer):
 
 class UserDetailSerializer(serializers.ModelSerializer):
     """用户详情序列化器"""
+
+    # 所有用户得到发帖信息
+    forum_author = ForumSerializer(many=True)
+    # 如果是普通用户可以得到刷题信息
+    participant = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         # fields = '__all__'
         exclude = ['password', 'groups', 'is_active', 'last_login', 'is_superuser', 'is_staff']
 
-    # 如果是普通用户可以得到刷题信息
-    participant = serializers.SerializerMethodField()
-    # 所有用户得到发帖信息
-    forum_author = ForumSerializer(many=True)
-
     @staticmethod
     def get_participant(obj):
-        try:
+        if obj.is_p:
             # 普通用户才有刷题
             participant_data = ParticipantDetailSerializer(obj.participant).data
             return participant_data
-        except:
+        else:
             # 其他用户无
             return None
 

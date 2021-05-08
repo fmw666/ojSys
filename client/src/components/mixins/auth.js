@@ -64,6 +64,7 @@ export default {
           this.problem_solved = response.data['participant']['solved_problems']
           this.problem_cnt = response.data['participant']['solved_problems'].length
           this.forum_post = response.data['forum_author']
+          console.log(response.data)
 
           for (let i=0; i<this.forum_post.length; i++) {
             this.like_cnt += this.forum_post[i]['like_cnt'].length
@@ -71,12 +72,37 @@ export default {
 
           // this.contest_cnt = 1
           // this.total_contest_cnt = 2
+
+          this.store_in_session()
         }).catch(error => {
 
         });
       } else {
         this.login_flag = false
       }
+    },
+
+    store_in_session() {
+      // 用户名
+      sessionStorage.setItem('username', this.username)
+      // 身份
+      sessionStorage.setItem('identity', this.identity)
+      // 手机号
+      sessionStorage.setItem('mobile', this.mobile)
+      // 邮箱
+      sessionStorage.setItem('email', this.email)
+      // 邮箱激活状态
+      sessionStorage.setItem('email_active', this.email_active)
+      // 是否登录
+      sessionStorage.setItem('login_flag', this.login_flag)
+      // 刷过的题
+      sessionStorage.setItem('problem_solved', this.problem_solved)
+      // 刷题数
+      sessionStorage.setItem('problem_cnt', this.problem_cnt)
+      // 发帖信息
+      sessionStorage.setItem('forum_post', this.forum_post)
+      // 获赞总数
+      sessionStorage.setItem('like_cnt', this.like_cnt)
     }
   }
 }

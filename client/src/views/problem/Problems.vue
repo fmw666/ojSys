@@ -108,12 +108,29 @@
           class="pagination">
         </el-pagination>
       </el-card>
+
       <el-card class="ranting">
         AC 排行榜
-        <br>
-        排名|用户名|通过数
-        <br>
-        <a>登录</a>后查看我的排名
+        <div class="example">
+          <span class="example_rank">排名</span>
+          <span class="example_user">用户名</span>
+          <span class="example_cnt">刷题数</span>
+        </div>
+        <el-divider style="margin: 0"></el-divider>
+
+
+        <div style="color: rgb(96, 98, 102); font-weight: 500; font-size: 15px" class="example" v-for="(rank, index) in rankings.slice(0, 10)">
+          <span class="example_rank" style="font-size: 14px; font-weight: bold">{{index + 1}}</span>
+          <span class="example_user">{{rank['user__username']}}</span>
+          <span class="example_cnt">{{rank['solved_problems__count']}}</span>
+
+        </div>
+        <div class="show_tips" v-if="rankings.length > 10">
+          仅展示最近十条，剩余可在个人中心查看
+        </div>
+
+        <div style="color: #505458" class="show_tips" v-if="login_flag">您的排名</div>
+        <div v-else @click="to_path('/login?next=/problems')" class="show_tips">登录后查看我的排名</div>
       </el-card>
     </div>
 
@@ -130,9 +147,6 @@ export default {
   mixins: [Base, Auth],
   data() {
     return {
-      user_id: sessionStorage.user_id || localStorage.user_id,
-      token: sessionStorage.token || localStorage.token,
-
       page: 1,  // 当前页数
       page_size: 10,  // 每页数量
       ordering: 'id',  // 排序
@@ -141,7 +155,8 @@ export default {
       count: 0,  // 总数量
       problems: [],  // 数据
       total_problems: [], // 所有数据，用于展示每个 tag 数目
-      solved_problems: [],
+      solved_problems: sessionStorage.getItem('problem_solved'),
+      rankings: [{'username': '测试', 'solved_problems': [1,2,3]}],  // 排名情况
 
       algs: [
         { type: 'info', label: '基础'},
@@ -299,17 +314,19 @@ export default {
         this.problems = response.data.results
 
         // 如果登录，那就给 problems 设置用户刷题状态
-        if (this.problem_solved.length !== 0) {
+        if (this.solved_problems) {
           this.set_problem_status()
         }
       }).catch(error => {
-        console.log(error.response.data)
+        console.log(error.response)
       })
     },
     // 设置 problem 状态
     set_problem_status() {
-      for (let i=0; i<this.problems.length; i++) {
-        this.problems[i]['status'] = this.problem_solved.indexOf(this.problems[i].id) !== -1
+      if (this.solved_problems.split(',').length !== 0) {
+        for (let i=0; i<this.problems.length; i++) {
+          this.problems[i]['status'] = this.solved_problems.split(',').indexOf(this.problems[i].id.toString()) !== -1
+        }
       }
     },
     // 点击排序
@@ -366,21 +383,15 @@ export default {
         this.header[i]["label"] = this.header[i]["label"] + ' · ' + header_cnts[this.header[i]["label"]]
       }
     },
-    login() {
-      // 判断用户登录状态
-      if (this.user_id && this.token) {
-        this.$axios.get(this.$host + "/api/v1/user/", {
-        // 向后端传递 JWT token 的方法
-        headers: {
-          'Authorization': 'JWT ' + this.token
-        },
+    // 得到排名
+    get_ranking() {
+      this.$axios.get(this.$host + "/api/v1/problems/ranking", {
         responseType: 'json'
         }).then(response => {
-
-          this.problem_solved = response.data['participant']['solved_problems']
-        })
-      }
-    }
+          this.rankings = response.data
+          console.log(response.data)
+      })
+    },
   },
   computed: {
 
@@ -390,6 +401,7 @@ export default {
     // 页面第一次加载后再加载数据
     this.login()
 
+    this.get_ranking();
     this.get_problems();
     this.get_total_problems();
   },
@@ -426,6 +438,9 @@ export default {
   user-select: none;
 }
 
+.ranting > ::v-deep(.el-card) > .el-card__body {
+  padding: 20px 30px;
+}
 
 .sort_bar {
   margin: 3px 0 0 10px;
@@ -476,6 +491,50 @@ export default {
 
 .pagination {
   margin: 20px 0 0 10px;
+}
+
+.show_tips {
+  margin-top: 50px;
+  color: rgb(64, 158, 255);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.example {
+  margin: 20px 0 10px;
+  font-size: 14px;
+  color: rgb(144, 147, 153);
+  font-weight: bold;
+  width: 100%;
+  text-align: left;
+  display: flex;
+}
+.example_rank {
+  flex: 1;
+}
+.example_user {
+  flex: 1;
+}
+.example_cnt {
+  text-align: right;
+}
+
+.show {
+  line-height: 23px;
+  font-size: 14px;
+  color: rgb(96, 98, 102);
+  cursor: pointer;
+  margin: 20px 0;
+  display: flex;
+}
+.show_rank {
+  flex: 1;
+}
+.show_user {
+  flex: 1;
+}
+.show_cnt {
+  text-align: right;
 }
 
 /* 列表加载动画 */

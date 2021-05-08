@@ -1,12 +1,22 @@
 <template>
 <div>
   <div class="container">
-    <el-card>
+    <el-card v-if="status === 1 || status === 3 || status === 0">
       <div class="header">
         <div class="title">{{name}}</div>
         <el-tag v-if="status === 0" style="margin-left: 20px;">报名开始时间：{{remain_hours}}:{{remain_minutes}}:{{remain_seconds}}</el-tag>
         <el-tag v-if="status === 1" style="margin-left: 20px;">报名剩余时间：{{remain_hours}}:{{remain_minutes}}:{{remain_seconds}}</el-tag>
-        <el-button @click="sign_up" style="float: right;" type="primary" round>点击报名</el-button>
+
+        <span v-if="status === 1">
+          <el-button v-if="identity === '管理员' || identity === '竞赛发布者'" style="float: right;" type="text" round>
+            当前报名人数：{{sign_up_user.length}}
+          </el-button>
+          <span v-else-if="identity === '普通用户'">
+            <el-button v-if="signed" @click="sign_up(2)" style="float: right;" type="success" round>取消报名</el-button>
+            <el-button v-else @click="sign_up(1)" style="float: right;" type="primary" round>点击报名</el-button>
+          </span>
+          <el-tag v-else @click="to_path('/login?next=/contests/' + cid)" style="float: right;cursor:pointer;" type="text" round>您还未登录</el-tag>
+        </span>
       </div>
 
       <div class="msg" style="margin-top: 10px">开赛时间</div>
@@ -15,19 +25,23 @@
       <el-tag>{{contest_end_date}}</el-tag>
 
       <div class="msg">描述</div>
-      <div class="content">{{message}}</div>
+      <div class="content" v-html="message"></div>
 
       <div class="msg">奖励</div>
-      <div class="content">{{reward}}</div>
+      <div class="content" v-html="reward"></div>
 
       <div class="msg">比赛要求</div>
-      <div v-if="require" class="content">{{require}}</div>
+      <div v-if="require" class="content" v-html="require"></div>
       <div v-else class="content">无</div>
 
     </el-card>
 
-    <el-button style="margin-top: 10px" @click="to_path('/contests')">返回列表</el-button>
+    <el-card v-if="status === 2">
+      进行中
+    </el-card>
 
+
+    <el-button style="margin-top: 10px" @click="to_path('/contests')">返回列表</el-button>
   </div>
 
   <el-backtop :visibility-height="0"></el-backtop>
@@ -52,6 +66,11 @@ export default defineComponent({
       message: '',
       reward: '',
       require: '',
+      // 报名的人
+      sign_up_user: [],
+
+      // 判断自己报没报名
+      signed: false,
 
       status: 0,  // 0未开始报名，1已开始报名，2比赛进行中，3已结束
 
@@ -70,7 +89,8 @@ export default defineComponent({
   mounted() {
     this.init_data()
     this.login()
-    if (this.login_flag === true) {
+    // 仅在报名中，登录检查
+    if (sessionStorage.getItem('login_flag') === 'true') {
       this.sign_up_check()
     }
   },
@@ -86,6 +106,7 @@ export default defineComponent({
           this.message = response.data['message'].replace(/\r\n/g,"<br/>")
           this.reward = response.data['reward']
           this.require = response.data['require']
+          this.sign_up_user = response.data['sign_up_user']
 
           this.sign_up_start_date = response.data['sign_up_start_date']
           this.sign_up_end_date = response.data['sign_up_end_date']
@@ -97,7 +118,7 @@ export default defineComponent({
             this.status = 0
           } else if (response.data['is_sign']) {
             this.status = 1
-          } else if (response.data['is_on']) {
+          } else if (response.data['is_start']) {
             this.status = 2
           } else if (response.data['is_end']) {
             this.status = 3
@@ -129,7 +150,6 @@ export default defineComponent({
           }
           let timer = setInterval(() => {
             this.difference(new Date(), time)
-            console.log(this.remain_hours)
             if (this.remain_hours <= 0 || this.remain_minutes <= 0 || this.remain_seconds <= 0) {
               // 如果结束报名
               this.$axios.get(this.$host + "/api/v1/cron/contests")
@@ -164,11 +184,31 @@ export default defineComponent({
 
     // 报名检查
     sign_up_check() {
-
+      this.$axios.post(this.$host + "/api/v1/contest/" + this.cid + '/sign/', {
+          uid: this.user_id,
+          option: 0  // 0 是检查是否报名，不做其他处理
+        }, {
+          responseType: 'json'
+        }).then(response => {
+          // 已报名
+          if (response.data['code'] === 1) {
+            this.signed = true
+            // ElMessage.success('您已报名该比赛~')
+          }
+          // 未报名
+          else if (response.data['code'] === -1) {
+            this.signed = false
+            // ElMessage.info('您未报名该比赛，欢迎报名~')
+          }
+          // 失败
+          else {
+            ElMessage.error('失败，请刷新网页重试~');
+          }
+      })
     },
 
     // 点击报名
-    sign_up() {
+    sign_up(option) {
       // 未登录
       if (this.login_flag === false) {
         this.$confirm('您还未进行登录, 请先登录！', '提示', {
@@ -186,7 +226,53 @@ export default defineComponent({
         return
       }
 
-      console.log('登录了')
+      // 进行报名
+      if (option === 1) {
+        this.$axios.post(this.$host + "/api/v1/contest/" + this.cid + '/sign/', {
+            uid: this.user_id,
+            option: option    // 1 未报名，进行报名操作
+          }, {
+            responseType: 'json'
+          }).then(response => {
+            // 报名成功
+            if (response.data['code'] === 1) {
+              ElMessage.success('报名成功，祝您有个好成绩！');
+              this.signed = true
+            }
+            // 已报名
+            else if (response.data['code'] === -1) {
+              ElMessage.info('报名成功，祝您有个好成绩！');
+              this.signed = true
+            }
+            // 失败
+            else {
+              ElMessage.error('报名失败，请刷新网页重试~');
+            }
+        })
+      } else if (option === 2) {
+        // 取消报名
+        this.$axios.post(this.$host + "/api/v1/contest/" + this.cid + '/sign/', {
+            uid: this.user_id,
+            option: option    // 2 已报名，取消报名
+          }, {
+            responseType: 'json'
+          }).then(response => {
+            // 取消报名成功
+            if (response.data['code'] === 1) {
+              ElMessage.success('已取消报名！');
+              this.signed = false
+            }
+            // 已报名
+            else if (response.data['code'] === -1) {
+              ElMessage.info('已取消报名！');
+              this.signed = false
+            }
+            // 失败
+            else {
+              ElMessage.error('取消报名失败，请刷新网页重试~');
+            }
+        })
+      }
     },
   }
 })

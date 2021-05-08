@@ -14,3 +14,4 @@ class ProblemSerializer(serializers.ModelSerializer):
         model = Problem
         # field = ['id', 'name', 'message', 'header', 'alg_type', 'ds_type', 'author']
         fields = '__all__'
+

@@ -37,17 +37,11 @@
 
 
 <script>
-import {codemirror} from 'vue-codemirror'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/keymap/sublime' //sublime编辑器效果
-import "codemirror/theme/dracula.css"// 配置里面也需要theme设置为monokai
-import "codemirror/mode/vue/vue.js" // 配置里面也需要mode设置为vue
-import 'codemirror/addon/selection/active-line' //光标行背景高亮，配置里面也需要styleActiveLine设置为true
 
 export default {
   name: 'CodeMirror',
   components: {
-    codemirror
+
   },
   props: {
     value: {

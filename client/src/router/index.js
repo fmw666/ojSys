@@ -4,6 +4,7 @@ import Problems from '../views/problem/Problems.vue'
 import ProblemDetail from "../views/problem/ProblemDetail.vue";
 import ContestDetail from "../views/contest/ContestDetail.vue"
 import Contests from '../views/contest/Contests.vue'
+import ContestPost from "../views/contest/ContestPost.vue";
 import Forum from '../views/forum/Forum.vue'
 import ForumDetail from '../views/forum/ForumDetail.vue'
 import ForumPost from "../views/forum/ForumPost.vue"
@@ -14,8 +15,18 @@ import Account from "../views/account/Account.vue"
 import VerifyEmail from "../views/auth/VerifyEmail.vue"
 import Forget from "../views/auth/Forget.vue"
 
+import Test from '../views/test.vue'
+
 
 const routes = [
+  {
+    path: '/test',
+    name: 'Test',
+    meta: {
+      index: 0
+    },
+    component: Test
+  },
   {
     path: '/',
     name: 'Index',
@@ -127,6 +138,14 @@ const routes = [
       index: 14,
     },
     component: ForumPost
+  },
+  {
+    path: '/contest_post',
+    name: 'ContestPost',
+    meta: {
+      index: 15,
+    },
+    component: ContestPost
   },
   {
     path: "/:catchAll(.*)",
