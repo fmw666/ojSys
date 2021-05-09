@@ -87,8 +87,10 @@ class CreateUserSerializer(serializers.ModelSerializer):
         participant = Participant(user.id)
         participant.save()
 
-        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER  # 引用jwt中的叫jwt_payload_handler函数(生成payload)
-        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER  # 函数引用 生成jwt
+        # 引用jwt中的叫jwt_payload_handler函数(生成payload)
+        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+        # 函数引用 生成jwt
+        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
         payload = jwt_payload_handler(user)  # 根据user生成用户相关的载荷
         token = jwt_encode_handler(payload)  # 传入载荷生成完整的jwt
@@ -130,6 +132,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
 class EmailSerializer(serializers.ModelSerializer):
     """更新邮箱序列化器"""
+
     class Meta:
         model = User
         fields = ['id', 'email']

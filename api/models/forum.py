@@ -14,7 +14,6 @@ class Forum(models.Model):
     modified = models.BooleanField(verbose_name='是否修改过', default=False)
 
     like_cnt = models.ManyToManyField(User, verbose_name='点赞')
-
     author = models.ForeignKey(User, verbose_name='帖子作者', on_delete=models.DO_NOTHING, related_name='forum_author')
 
     def __str__(self):

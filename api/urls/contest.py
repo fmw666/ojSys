@@ -6,6 +6,8 @@ urls = [
     url(r'^contests/$', contest.ContestListView.as_view()),
     # 查询单个比赛
     url(r'^contests/(?P<cid>\d+)$', contest.ContestView.as_view()),
+    # 查询单个比赛的所有题目
+    url(r'^contests/(?P<cid>\d+)/problems/$', contest.ContestAllProblemsView.as_view()),
     # 发布比赛
     url(r'^contests/post/(?P<uid>\d+)$', contest.ContestPostView.as_view()),
 

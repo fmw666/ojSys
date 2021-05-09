@@ -82,8 +82,11 @@ class CheckContestStatus(APIView):
                 contest.is_sign = False
                 contest.is_start = False
                 contest.is_end = True
+                # 给发布者发短信
 
             contest.save()
+
+            # 比赛快要（1小时）开始~ 发短信提醒
         return Response({'code': 1})
 
 

@@ -20,7 +20,7 @@ class ForumListView(ListAPIView):
     def get_queryset(self):
         try:
             from_who = self.request.query_params['from']
-        except:
+        except ModuleNotFoundError:
             from_who = 'all'
 
         if from_who == 'all':
@@ -43,7 +43,6 @@ class ForumView(APIView):
 
     @staticmethod
     def get(request, fid):
-        print(request.query_params)
         try:
             forum = Forum.objects.get(id=fid)
         except Forum.DoesNotExist:
@@ -63,7 +62,7 @@ class ForumView(APIView):
                 forum.like_cnt.add(user)
                 forum.save()
                 return Response({'code': 1})
-            except:
+            except User.DoesNotExist or Forum.DoesNotExist:
                 return Response({'code': 0})
 
         # 取消点赞
@@ -75,7 +74,7 @@ class ForumView(APIView):
                 forum.like_cnt.remove(user)
                 forum.save()
                 return Response({'code': 1})
-            except:
+            except User.DoesNotExist or Forum.DoesNotExist:
                 return Response({'code': 0})
 
 
@@ -90,5 +89,5 @@ class ForumPostView(APIView):
 
             forum = Forum.objects.create(title=title, content=content, author=user)
             return Response({'code': 1, 'fid': forum.id})
-        except:
+        except User.DoesNotExist or Forum.DoesNotExist:
             return Response({'code': 0})

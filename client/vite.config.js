@@ -1,4 +1,4 @@
-export  default {
+export default {
     optimizeDeps: {
         include: [
             // "element-plus/lib/theme-chalk/index.css",

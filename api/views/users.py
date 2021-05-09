@@ -89,7 +89,7 @@ class UserPSWResetView(APIView):
             user.set_password(request.data['password'])
             user.save()
             code = 1
-        except:
+        except User.DoesNotExist:
             code = 0
         return Response({'code': code})
 

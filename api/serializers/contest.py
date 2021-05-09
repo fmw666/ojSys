@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from .problem import ProblemSerializer
 from ..models.contest import Contest
 
 

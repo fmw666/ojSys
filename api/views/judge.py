@@ -7,7 +7,6 @@ from celery_tasks.main import celery_app
 
 from ..models.problem import Problem
 from ..models.user.participant import Participant
-from ..models.user.user import User
 
 
 class JudgeView(APIView):
@@ -37,11 +36,10 @@ class JudgeView(APIView):
         # 如果通过算法，保存用户记录
         if result['code'] == 'ac':
             try:
-                user = User.objects.get(id=uid)
-                p_user = Participant.objects.get(user=user)
+                p_user = Participant.objects.get(user__id=uid)
                 p_user.solved_problems.add(problem)
                 p_user.save()
-            except:
+            except Participant.DoesNotExist:
                 pass
 
         return Response(result)

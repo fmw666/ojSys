@@ -11,6 +11,7 @@ from ..models.problem import Problem
 from ..models.user.contestorganizer import ContestOrganizer
 from ..models.user.user import User
 from ..serializers.contest import ContestSerializer
+from ..serializers.problem import ProblemSerializer
 
 
 class ContestListView(ListAPIView):
@@ -22,10 +23,7 @@ class ContestListView(ListAPIView):
     serializer_class = ContestSerializer
 
     def get_queryset(self):
-        try:
-            status = self.request.query_params['status']
-        except:
-            status = 'sign'
+        status = self.request.query_params['status'] if 'status' in self.request.query_params else 'sign'
         if status == 'sign':
             return Contest.objects.filter(is_sign=True)
         elif status == 'no':
@@ -33,9 +31,36 @@ class ContestListView(ListAPIView):
         elif status == 'end':
             return Contest.objects.filter(is_end=True)
         elif status == 'start':
-            return Contest.objects.filter(is_start=True)
+            # 返回给普通用户他们报名的比赛，或者竞赛发布者他们发布的正在进行的比赛
+            uid = self.request.query_params['uid']
+            user = User.objects.get(id=uid)
+            contest = Contest.objects.filter(is_start=True)
+            if user.is_p:
+                return contest.filter(sign_up_user=uid)
+            elif user.is_oc:
+                co = ContestOrganizer.objects.get(user=user)
+                return contest.filter(author=co)
         else:
             return None
+
+
+# 获取比赛所有题目
+class ContestAllProblemsView(ListAPIView):
+    serializer_class = ProblemSerializer
+
+    def get_queryset(self):
+        cid = self.kwargs.get('cid')
+        uid = self.request.query_params['uid']
+        try:
+            contest = Contest.objects.get(id=cid)
+        except Contest.DoesNotExist:
+            return None
+
+        # 如果没有该用户，就返回 空 QuerySet
+        if contest.sign_up_user.filter(id=uid):
+            return contest.problems.all()
+        else:
+            return contest.sign_up_user.filter(id=uid)
 
 
 class ContestView(APIView):
@@ -51,6 +76,7 @@ class ContestView(APIView):
         return Response(serializer.data)
 
 
+# 日期序列化
 def date_serializer(str_date):
     # str_date: 2021-05-08T08:40:57.000Z   且需要 加 8小时
     fmt = '%Y/%m/%d %H:%M:%S'
@@ -67,6 +93,7 @@ def date_serializer(str_date):
     return dt
 
 
+# 管理人发布竞赛
 class ContestPostView(APIView):
     @staticmethod
     def post(request, uid):
@@ -106,14 +133,13 @@ class ContestSignView(APIView):
 
         # 0 只检查是否报名
         if option == 0:
-            print(contest.sign_up_user.filter(id=uid))
             try:
                 # 如果用户已报名
                 if contest.sign_up_user.filter(id=uid):
                     return Response({'code': 1})
                 else:
                     return Response({'code': -1})
-            except:
+            except Contest.DoesNotExist:
                 return Response({'code': 0})
         # 1 只进行报名
         elif option == 1:
@@ -124,7 +150,7 @@ class ContestSignView(APIView):
                 else:
                     contest.sign_up_user.add(user)
                     return Response({'code': 1})
-            except:
+            except Contest.DoesNotExist:
                 return Response({'code': 0})
         # 2 只进行取消报名
         elif option == 2:
@@ -135,8 +161,7 @@ class ContestSignView(APIView):
                     return Response({'code': 1})
                 else:
                     return Response({'code': -1})
-            except:
+            except Contest.DoesNotExist:
                 return Response({'code': 0})
         else:
             Response({'code': 0})
-

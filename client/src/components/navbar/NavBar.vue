@@ -9,8 +9,12 @@
       <el-submenu v-if="login_flag" class="sub_menu" index="/account">
         <template #title>您好，{{username}}</template>
         <el-menu-item index="/account">个人中心</el-menu-item>
-        <el-menu-item v-if="identity === '竞赛发布者'" index="/contest_post">竞赛管理</el-menu-item>
-        <el-menu-item index="/login" @click="logout()"> 退出登录</el-menu-item>
+        <div v-if="identity === '竞赛发布者'">
+          <el-menu-item index="/contest_post">竞赛管理</el-menu-item>
+          <el-menu-item index="/problem_post">题库管理</el-menu-item>
+        </div>
+        <el-divider style="margin: 0"></el-divider>
+        <el-menu-item index="/login" @click="logout()"><b>退出登录</b></el-menu-item>
       </el-submenu>
       <el-menu-item v-else index="/login">您还未登录，马上去登录</el-menu-item>
     </el-menu>

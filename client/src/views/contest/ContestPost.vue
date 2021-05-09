@@ -6,30 +6,45 @@
           <div style="height: 70vh; padding: 20px 40px 60px 20px">
             <div class="title">发布比赛</div>
             <el-form>
-              <el-form-item label="比赛标题">
-                <el-input v-model="name"></el-input>
-              </el-form-item>
+              <div style="display: flex">
+                <div style="flex: 1; padding: 10px">
+                  <el-form-item label="比赛标题">
+                    <el-input v-model="name"></el-input>
+                  </el-form-item>
 
-              <el-form-item label="描述信息">
-                <el-input type="textarea" v-model="message"></el-input>
-              </el-form-item>
+                  <el-form-item label="描述信息">
+                    <el-input resize="none" :autosize="{ minRows: 10, maxRows: 10}" type="textarea" v-model="message"></el-input>
+                  </el-form-item>
+                </div>
 
-              <el-form-item label="奖励信息">
-                <el-input type="textarea" v-model="reward"></el-input>
-              </el-form-item>
+                <div style="width: 50%; padding: 10px">
+                  <el-form-item label="奖励信息">
+                    <el-input resize="none" :autosize="{ minRows: 6, maxRows: 6}" type="textarea" v-model="reward"></el-input>
+                  </el-form-item>
 
-              <el-form-item label="比赛要求">
-                <el-input type="textarea" v-model="require"></el-input>
-              </el-form-item>
+                  <el-form-item label="比赛要求">
+                    <el-input resize="none" :autosize="{ minRows: 5, maxRows: 5}" type="textarea" v-model="require"></el-input>
+                  </el-form-item>
+                </div>
+              </div>
 
 
               <el-transfer
-                v-model="value"
+                v-model="my_problems"
                 filterable
                 :filter-method="filterMethod"
-                filter-placeholder="请输入城市拼音"
-                :data="problems_data"
-                :titles="['可选题目列表', '已选择题目']"
+                filter-placeholder="请输入要查找的题目"
+                :data="my_problems_data"
+                :titles="['我的题目列表', '已选择题目']"
+              />
+
+              <el-transfer
+                v-model="other_problems"
+                filterable
+                :filter-method="filterMethod"
+                filter-placeholder="请输入要查找的题目"
+                :data="other_problems_data"
+                :titles="['其他题目列表', '已选择题目']"
               />
 
               <div>
@@ -80,8 +95,10 @@ export default {
       reward: '',
       require: '',
 
-      problems_data: [],
-      value: [],
+      my_problems_data: [],
+      my_problems: [],
+      other_problems_data: [],
+      other_problems: [],
       filterMethod(query, item) {
         return item.spell.indexOf(query) > -1;
       },
@@ -95,10 +112,32 @@ export default {
   },
   mounted() {
     this.login()
-    this.get_all_problems()
+    this.get_my_problems()
+    this.get_other_problems()
   },
   methods: {
-    get_all_problems() {
+    // 自己发布的题
+    get_my_problems() {
+      // 获取所有比赛数据
+      this.$axios.get(this.$host + "/api/v1/problems/my/", {
+          params: {
+            uid: this.user_id,
+          },
+          responseType: 'json'
+        }).then(response => {
+          const data = [];
+          response.data.results.forEach((problem) => {
+            data.push({
+              label: problem['name'],
+              key: problem['id'],
+              spell: problem['name']
+            });
+          });
+          this.my_problems_data = data
+        })
+    },
+    // 所有人发布的题
+    get_other_problems() {
       // 获取所有比赛数据
       this.$axios.get(this.$host + "/api/v1/problems/", {
           params: {
@@ -115,7 +154,7 @@ export default {
               spell: problem['name']
             });
           });
-          this.problems_data = data
+          this.other_problems_data = data
         })
     },
     // 点击发布
@@ -143,7 +182,7 @@ export default {
           message: this.message,
           reward: this.reward,
           require: this.require,
-          problems: this.value,
+          problems: Array.from(new Set(this.other_problems.concat(this.my_problems))),
           date_sign_up: this.date_sign_up,
           date_contest: this.date_contest,
         }, {
@@ -165,7 +204,8 @@ export default {
       this.message = '';
       this.reward = ''
       this.require = ''
-      this.value = []
+      this.my_problems = []
+      this.other_problems = []
       this.date_sign_up = ''
       this.date_contest = ''
     },
@@ -175,5 +215,10 @@ export default {
 
 
 <style scoped>
-
+.title {
+  color: #3091f2;
+  font-size: 17px;
+  font-weight: bold;
+  margin: 10px 0 20px 0;
+}
 </style>

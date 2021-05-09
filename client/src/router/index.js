@@ -2,6 +2,7 @@ import {createRouter, createWebHistory} from 'vue-router'
 import Index from '../views/Index.vue'
 import Problems from '../views/problem/Problems.vue'
 import ProblemDetail from "../views/problem/ProblemDetail.vue";
+import ProblemPost from "../views/problem/ProblemPost.vue";
 import ContestDetail from "../views/contest/ContestDetail.vue"
 import Contests from '../views/contest/Contests.vue'
 import ContestPost from "../views/contest/ContestPost.vue";
@@ -146,6 +147,14 @@ const routes = [
       index: 15,
     },
     component: ContestPost
+  },
+  {
+    path: '/problem_post',
+    name: 'ProblemPost',
+    meta: {
+      index: 16,
+    },
+    component: ProblemPost
   },
   {
     path: "/:catchAll(.*)",

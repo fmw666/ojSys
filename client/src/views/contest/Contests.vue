@@ -1,5 +1,6 @@
 <template>
   <div id="contests">
+
     <div class="container">
       <div style="float: right">
         <router-link to="/sregister">
@@ -33,7 +34,7 @@
                   <span class="tip">报名截至时间：</span>
                   <el-button type="text" style="padding: 5px">{{contest['sign_up_end_date']}}</el-button>
 
-                  <span class="tip" style="margin-top: 7px">当前报名人数：3</span>
+                  <span v-if="activeName === 'sign'" class="tip" style="margin-top: 7px">当前报名人数：3</span>
                 </div>
 
               </el-card>
@@ -66,9 +67,9 @@
 </template>
 
 <script>
-import {Base} from '../../components/mixins'
+import {Base, Auth} from '../../components/mixins'
 export default {
-  mixins: [Base],
+  mixins: [Base, Auth],
   data() {
     return {
 
@@ -114,7 +115,8 @@ export default {
           page: this.page,
           page_size: this.page_size,
           ordering: this.ordering,
-          status: this.activeName
+          status: this.activeName,
+          uid: this.user_id,
         },
         responseType: 'json'
       }).then(response => {

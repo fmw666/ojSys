@@ -7,6 +7,7 @@ from rest_framework.filters import OrderingFilter
 
 from ..models.problem import Problem
 from ..models.user.participant import Participant
+from ..models.user.user import User
 from ..serializers.problem import ProblemSerializer
 
 ALGS = {
@@ -49,7 +50,6 @@ class ProblemListView(ListAPIView):
             alg = self.request.query_params['alg']
             ds = self.request.query_params['ds']
             firm = self.request.query_params['firm']
-            print(firm)
             header = self.request.query_params['header']
             # 如果都没有
             if not alg and not ds and not firm and not header:
@@ -64,6 +64,22 @@ class ProblemListView(ListAPIView):
                 return qs
         except:
             return Problem.objects.filter(public=True)
+
+
+# 发布者自己发布的题目列表
+class ProblemListOfMineView(ListAPIView):
+    ordering_fields = ['id']
+    serializer_class = ProblemSerializer
+
+    def get_queryset(self):
+        try:
+            uid = self.request.query_params['uid']
+            user = User.objects.get(id=uid)
+            problem = Problem.objects.filter(author=user)
+        except Problem.DoesNotExist:
+            raise Http404
+
+        return problem
 
 
 class ProblemView(APIView):
@@ -83,4 +99,6 @@ class RankingView(APIView):
 
     @staticmethod
     def get(request):
-        return Response(Participant.objects.values('user__username').annotate(Count('solved_problems')))
+        return Response(Participant.objects.values('user__username')
+                        .annotate(Count('solved_problems'))
+                        .order_by('-solved_problems__count'))

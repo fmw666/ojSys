@@ -62,7 +62,8 @@
             <div class="under">
               <div class="statistics">
                 <span>发帖总数：{{forum_post.length}}</span>
-                <span style="margin-left: 20px">获赞总数：{{like_cnt}}</span>
+                <el-divider direction="vertical"></el-divider>
+                <span>获赞总数：{{like_cnt}}</span>
               </div>
               <el-button class="publish_btn" @click="to_path('forum_post')" size="small" round type="primary">发布帖子<i class="el-icon-s-promotion el-icon--right"></i></el-button>
             </div>
@@ -278,7 +279,7 @@ export default {
 }
 
 .under {
-  display: flex;
+  /*display: flex;*/
 }
 .statistics {
   font-size: 14px;
@@ -289,6 +290,10 @@ export default {
   word-break: break-all;
   height: 22px;
   vertical-align: center;
+}
+.publish_btn {
+  margin-top: 10px;
+  float: right;
 }
 
 
