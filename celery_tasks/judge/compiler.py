@@ -69,6 +69,7 @@ def run(p_code):
         try:
             os.remove(f_path)
         except FileNotFoundError as e:
+            print(e)
             exit(1)
 
 

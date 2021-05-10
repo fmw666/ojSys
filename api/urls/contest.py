@@ -13,4 +13,6 @@ urls = [
 
     # 用户报名比赛
     url(r'^contest/(?P<cid>\d+)/sign/$', contest.ContestSignView.as_view()),
+    # 提交用户记录
+    url(r'^contest/(?P<cid>\d+)/info/$', contest.ContestInfoView.as_view()),
 ]

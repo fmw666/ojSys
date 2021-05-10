@@ -60,6 +60,12 @@
                 <span style="color: #495060">Accepted</span>
               </el-tag>
             </span>
+            <span v-if="result === 'waiting'">
+              <el-tag>
+                <i style="color: rgb(255,153,0)" class="el-icon-remove"></i>&ensp;
+                <span style="color: #495060">Waiting</span>
+              </el-tag>
+              </span>
           </span>
         </span>
       </div>
@@ -173,6 +179,8 @@ export default defineComponent({
     execute() {
       this.login_tip(false)
       if (this.login_flag === true) {
+        // 改变运行结果状态为执行中
+        this.result = 'waiting'
         this.$axios.post(this.$host + "/api/v1/judge/", {
           uid: this.user_id,
           id: this.pid,

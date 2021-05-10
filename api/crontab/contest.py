@@ -59,6 +59,7 @@ class CheckContestStatus(APIView):
             if compare(dt_sign_up, dt_now) == 1:
                 contest.is_no = True
                 contest.is_sign = False
+                contest.is_wait = False
                 contest.is_start = False
                 contest.is_end = False
             # 比赛开始报名
@@ -66,22 +67,31 @@ class CheckContestStatus(APIView):
             if compare(dt_sign_end, dt_now) == 1 and compare(dt_now, dt_sign_up) == 1:
                 contest.is_no = False
                 contest.is_sign = True
+                contest.is_wait = False
                 contest.is_start = False
                 contest.is_end = False
-            # 比赛开始进行
+            # 比赛等待中（报名结束，比赛未开始）
             dt_contest_start = contest.contest_start_date
+            if compare(dt_now, dt_sign_end) == 1 and compare(dt_contest_start, dt_now) == 1:
+                contest.is_no, contest.is_sign = False, False
+                contest.is_wait = True
+                contest.is_start, contest.is_end = False, False
+            # 比赛开始进行
             dt_contest_end = contest.contest_end_date
             if compare(dt_now, dt_contest_start) == 1 and compare(dt_contest_end, dt_now) == 1:
                 contest.is_no = False
                 contest.is_sign = False
+                contest.is_wait = False
                 contest.is_start = True
                 contest.is_end = False
             # 比赛结束
             if compare(dt_now, dt_contest_end) == 1:
                 contest.is_no = False
                 contest.is_sign = False
+                contest.is_wait = False
                 contest.is_start = False
                 contest.is_end = True
+                # 计算比赛结果，通过 contest ranking result 表
                 # 给发布者发短信
 
             contest.save()

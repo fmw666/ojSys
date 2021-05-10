@@ -53,10 +53,28 @@
       <div style="margin: 0 0 30px 0; color: #3091f2; font-size: 14px">比赛进行中，请在截止时间前完成比赛，祝您有个好的成绩！</div>
       <div class="title">{{name}}</div>
       <el-tag style="margin-left: 20px;">剩余比赛时间：{{remain_hours}}:{{remain_minutes}}:{{remain_seconds}}</el-tag>
-      <el-button type="primary" @click="commit" style="float: right">提交比赛</el-button>
+
+      <el-button type="primary" @click="dialogVisible = true" style="float: right">提交比赛</el-button>
+
+
+      <el-dialog
+        title="提示"
+        v-model="dialogVisible"
+        width="30%"
+        center>
+        <div>当前比赛题目总数：<b>{{problems_cnt}}</b>，您已完成题数：<b>{{pass_cnt}}</b></div>
+        <br>
+        <div>确定提交？提交后不可修改，等到比赛结束后可查询比赛结果。</div>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="dialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="commit">确 定</el-button>
+          </span>
+        </template>
+      </el-dialog>
+
 
       <div class="msg" style="margin: 10px 0 30px 40px; font-size: 14px">——主办方：{{holder}}</div>
-
       <div style="margin-top: 20px">
         <div v-for="cp in contest_problems.slice((page-1), page)">
           <div class="description">
@@ -114,6 +132,12 @@
                     <el-tag>
                       <i style="color: #19be6b" class="el-icon-success"></i>&ensp;
                       <span style="color: #495060">Accepted</span>
+                    </el-tag>
+                  </span>
+                  <span v-if="result === 'waiting'">
+                    <el-tag>
+                      <i style="color: rgb(255,153,0)" class="el-icon-remove"></i>&ensp;
+                      <span style="color: #495060">Waiting</span>
                     </el-tag>
                   </span>
                 </span>
@@ -178,11 +202,16 @@ export default defineComponent({
       page: 1,  // 当前页数
       ordering: 'id',  // 排序
       problems_cnt: 0,
+      // 用户通过题目数
+      pass_cnt: 0,
 
       result: '',
       msg: '',
       // 返回结果记录
-      results: []
+      results: [],
+
+      // 提交比赛的 dialog 确定框
+      dialogVisible: false,
     }
   },
   mounted() {
@@ -231,15 +260,24 @@ export default defineComponent({
             this.get_contest_problems()
           } else if (response.data['is_end']) {
             this.status = 3
+            // 等待中
+          } else if (response.data['is_wait']) {
+            this.status = 4
+            ElMessage.warning('比赛未开始，等待中')
+            this.to_path('/contests')
           }
 
           let time
+          // 报名如果开始、如果结束、这类的时间提示
+          let message
+
           // 未开始报名 status = 0
           if (this.status === 0) {
             let new_time = this.sign_up_start_date.replace('年', '-')
             new_time = new_time.replace('月', '-').replace('日', '')
             new_time += ':00'
             time = new Date(new_time)
+            message = '报名已开始'
             this.difference(new Date(), time)
           }
           // 开始报名 status = 1
@@ -250,14 +288,27 @@ export default defineComponent({
             new_time += ':00'
             // date like: 2021-05-12 12:15:12
             time = new Date(new_time)
+            message = '报名已结束'
             this.difference(new Date(), time)
           }
           // 开始比赛 status = 2
           else if (this.status === 2) {
+            this.$message({
+              type: 'success',
+              duration: 10000,
+              showClose: true,
+              message: '比赛已开始，已为您自动计时，您最终完成的时间将作为您最后成绩的一部分'
+            });
+            this.$notify.info({
+              title: '提示',
+              message: '请勿刷新或中途退出（此消息不会自动关闭）',
+              duration: 0
+            });
             let new_time = this.contest_end_date.replace('年', '-')
             new_time = new_time.replace('月', '-').replace('日', '')
             new_time += ':00'
             time = new Date(new_time)
+            message = '比赛已结束'
             this.difference(new Date(), time)
           }
           // 结束了的话，就不用了倒计时了 status = 3
@@ -267,10 +318,13 @@ export default defineComponent({
 
           let timer = setInterval(() => {
             this.difference(new Date(), time)
-            if (this.remain_hours <= 0 || this.remain_minutes <= 0 || this.remain_seconds <= 0) {
-              // 如果结束报名
+            // 时间结束
+            if (this.remain_hours < 0 || this.remain_minutes < 0 || this.remain_seconds < 0) {
               this.$axios.get(this.$host + "/api/v1/cron/contests")
               clearInterval(timer)
+              // 提示，然后刷新
+              ElMessage.info(message)
+              this.$router.go(0)
             }
           }, 1000)
 
@@ -424,6 +478,8 @@ export default defineComponent({
 
     // 执行代码
     execute() {
+      // 改变运行结果状态为执行中
+      this.result = 'waiting'
       this.$axios.post(this.$host + "/api/v1/judge/", {
         uid: this.user_id,
         id: this.contest_problems[this.page-1]['id'],
@@ -439,6 +495,7 @@ export default defineComponent({
             message: '运行通过！'
           });
           this.results[this.page-1] = '已通过'
+          this.pass_cnt++
           this.msg = 'ac'
         } else {
           this.$message({
@@ -453,6 +510,22 @@ export default defineComponent({
 
     // 提交比赛
     commit() {
+      // 我需要传入，用户id，比赛id，用户完成了哪些题，用时情况，这样就能查询到这个比赛所有题目
+      // 保存到比赛里（和用户多对多关系）,保存到 ContestInfoResult
+      let pass_problems = []
+      for (let index in this.results) {
+        if (this.results[index] === '已通过') {
+          pass_problems.push(this.contest_problems[index])
+        }
+      }
+      // this.$axios.post(this.$host + "/api/v1/contest/" + this.cid + '/info/', {
+      //       uid: this.user_id,
+      //       problems: option    // 1 未报名，进行报名操作
+      //     }, {
+      //       responseType: 'json'
+      //     }).then(response => {
+      //
+      // })
 
     },
   }

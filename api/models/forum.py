@@ -13,6 +13,7 @@ class Forum(models.Model):
     modify_date = models.DateTimeField(verbose_name='最后修改时间', auto_now=True)
     modified = models.BooleanField(verbose_name='是否修改过', default=False)
 
+    # 后面可以用 Redis 存储
     like_cnt = models.ManyToManyField(User, verbose_name='点赞')
     author = models.ForeignKey(User, verbose_name='帖子作者', on_delete=models.DO_NOTHING, related_name='forum_author')
 

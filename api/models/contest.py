@@ -18,21 +18,24 @@ class Contest(models.Model):
 
     author = models.ForeignKey(ContestOrganizer, verbose_name='机构', on_delete=models.CASCADE, related_name='出题方')
     sign_up_start_date = models.DateTimeField(verbose_name='报名开始时间', help_text='Format is: yyyy-mm-dd hh:mm',
-                                              blank=False, default=timezone.now())
+                                              blank=False, default=timezone.now)
     sign_up_end_date = models.DateTimeField(verbose_name='报名结束时间', help_text='Format is: yyyy-mm-dd hh:mm',
-                                            blank=False, default=timezone.now())
+                                            blank=False, default=timezone.now)
     contest_start_date = models.DateTimeField(verbose_name='比赛开始时间', help_text='Format is: yyyy-mm-dd hh:mm',
-                                              blank=False, default=timezone.now())
+                                              blank=False, default=timezone.now)
     contest_end_date = models.DateTimeField(verbose_name='比赛结束时间', help_text='Format is: yyyy-mm-dd hh:mm',
-                                            blank=False, default=timezone.now())
+                                            blank=False, default=timezone.now)
 
     is_no = models.BooleanField(verbose_name='未开始', default=True)
     is_sign = models.BooleanField(verbose_name='报名中', default=False)
+    is_wait = models.BooleanField(verbose_name='等待中', default=False)
     is_start = models.BooleanField(verbose_name='已开始', default=False)
     is_end = models.BooleanField(verbose_name='已结束', default=False)
 
     # 报名的人
-    sign_up_user = models.ManyToManyField(User, verbose_name='报名的人', blank=True)
+    sign_up_user = models.ManyToManyField(User, verbose_name='报名的人', blank=True, related_name='sign_up')
+    # 提交的人
+    commit_user = models.ManyToManyField(User, verbose_name='提交的人', blank=True, related_name='commit')
 
     def clean(self, *args, **kwargs):
         # run the base validation
@@ -57,3 +60,17 @@ class Contest(models.Model):
         verbose_name_plural = verbose_name
 
 
+# 比赛结果信息表
+class ContestInfoResult(models.Model):
+    contest = models.ForeignKey(Contest, related_name='contest_info', on_delete=models.CASCADE, verbose_name='比赛题目')
+    user = models.ForeignKey(User, related_name='user_info', on_delete=models.CASCADE, verbose_name='比赛参与用户')
+    pass_problem = models.ForeignKey(Problem, verbose_name='用户完成题目', on_delete=models.DO_NOTHING)
+    ranking = models.IntegerField(unique=False, blank=True, verbose_name='用户排名', default=0)
+
+    def __str__(self):
+        return 'user: {0} in contest: {1}. pass_problem: {2}, ranking: {3}'\
+            .format(self.user.username, self.contest.name, self.pass_problem.name, self.ranking)
+
+    class Meta:
+        verbose_name = '比赛-用户-信息记录（Contest Info Result）'
+        verbose_name_plural = verbose_name

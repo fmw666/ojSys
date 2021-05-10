@@ -14,7 +14,7 @@
           <el-tab-pane v-for="tp in tabPanes" :label="tp.label" :name="tp.name">
 
             <transition-group>
-              <el-card v-for="contest in contests" :key="contest.id" @click="to_path('/contests/' + contest.id)" class="items" shadow="always">
+              <el-card v-for="contest in contests" :key="contest.id" @click="to_path_with_tips(tp.name, contest.id)" class="items" shadow="always">
                 <div class="card-left">
                   <h4 class="header">{{contest.name}}</h4>
                   <span class="holder">——主办方：{{contest['author_username']}}</span>
@@ -25,6 +25,24 @@
                     <el-tag>{{contest['contest_end_date']}}</el-tag>
                   </div>
                 </div>
+
+                <el-dialog
+                  title="温馨提示"
+                  v-model="centerDialogVisible"
+                  width="30%"
+                  center>
+                  <span style="font-weight: bold; font-size: 15px; color: #ed3f14">在进入比赛前，我们要确保您了解以下情况：</span>
+                  <ol>
+                    <li>点击确定后进入比赛，系统会为您自动开始计时，点击 <b>提交比赛</b> 后结束计时。</li>
+                    <li>请勿中途 <b>退出</b> 或 <b>刷新</b> 页面。（系统完善中，咱还不支持保存您提交的代码）</li>
+                  </ol>
+                  <template #footer>
+                    <span class="dialog-footer">
+                      <el-button @click="centerDialogVisible = false">取 消</el-button>
+                      <el-button type="primary" @click="to_path('/contests/' + contest.id)">确 定</el-button>
+                    </span>
+                  </template>
+                </el-dialog>
 
                 <el-divider direction="vertical" style="height: 30px"></el-divider>
 
@@ -82,6 +100,8 @@ export default {
       contests: [],  // 数据
 
       activeName: 'sign',
+      // 弹出对话框，只有在进入 正在进行中的比赛 时，才触发
+      centerDialogVisible: false,
 
       tabPanes: [
         { label: '⭐ 报名中', name: 'sign'},
@@ -92,6 +112,14 @@ export default {
     };
   },
   methods: {
+    // 带条件跳转
+    to_path_with_tips(name, cid) {
+      if (name === 'start') {
+        this.centerDialogVisible = true
+      } else {
+        this.to_path('/contests/' + cid)
+      }
+    },
     // 切换每页多少数据
     handleSizeChange(val) {
       this.page_size = val;

@@ -56,8 +56,9 @@ class ContestAllProblemsView(ListAPIView):
         except Contest.DoesNotExist:
             return None
 
-        # 如果没有该用户，就返回 空 QuerySet
-        if contest.sign_up_user.filter(id=uid):
+        user = User.objects.get(id=uid)
+        # 如果没有该用户，就返回 空 QuerySet，或者是管理员或者竞赛发布者可以看
+        if contest.sign_up_user.filter(id=uid) or user.is_oc or user.is_admin:
             return contest.problems.all()
         else:
             return contest.sign_up_user.filter(id=uid)
@@ -165,3 +166,8 @@ class ContestSignView(APIView):
                 return Response({'code': 0})
         else:
             Response({'code': 0})
+
+
+# 用户提交比赛添加
+class ContestInfoView(APIView):
+    pass

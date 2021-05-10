@@ -3,7 +3,7 @@ from .models.user.user import User
 from .models.user.contestorganizer import ContestOrganizer
 from .models.user.participant import Participant
 from .models.problem import Problem
-from .models.contest import Contest
+from .models.contest import Contest, ContestInfoResult
 from .models.forum import Forum, ForumReply
 
 
@@ -36,6 +36,12 @@ class ProblemAdmin(admin.ModelAdmin):
 class ContestAdmin(admin.ModelAdmin):
     list_display = ['name', 'author']
     list_filter = ('author',)
+
+
+@admin.register(ContestInfoResult)
+class ContestInfoResultAdmin(admin.ModelAdmin):
+    list_display = ['contest', 'user', 'ranking', 'pass_problem']
+    list_filter = ('contest', 'user', 'ranking')
 
 
 @admin.register(Forum)
