@@ -30,11 +30,19 @@
       <span style="color: rgb(64,158,255);">--</span>
       <el-tag>{{contest_end_date}}</el-tag>
 
-      <div v-if="status === 3">
-        <div class="msg">赛后情况</div>
-        <div class="content">aa</div>
+      <el-row v-if="status === 3">
+        <el-col :span="12">
+          <div class="msg">赛后情况</div>
+          <div class="content">提交用户（排名不分先后）：</div>
+          <div class="content">排名情况：</div>
+        </el-col>
+
+        <el-col :span="12">
+          <div class="msg">题目列表</div>
+        </el-col>
+
         <el-divider></el-divider>
-      </div>
+      </el-row>
 
 
       <div class="msg">描述</div>
@@ -210,8 +218,17 @@ export default defineComponent({
       // 返回结果记录
       results: [],
 
+      // 比赛进行中
       // 提交比赛的 dialog 确定框
       dialogVisible: false,
+      // 进入比赛开始计时
+      enter_time: new Date(),
+      finish_time: new Date(),
+
+      // 比赛结束数据
+      end_signed_users: [],
+      end_rankings: [],
+      end_problems: [],
     }
   },
   mounted() {
@@ -297,7 +314,7 @@ export default defineComponent({
               type: 'success',
               duration: 10000,
               showClose: true,
-              message: '比赛已开始，已为您自动计时，您最终完成的时间将作为您最后成绩的一部分'
+              message: '比赛已开始，已为您自动计时，您最终完成的时间将作为您最后成绩的一部分（此消息存在 10s）'
             });
             this.$notify.info({
               title: '提示',
@@ -309,10 +326,21 @@ export default defineComponent({
             new_time += ':00'
             time = new Date(new_time)
             message = '比赛已结束'
+
             this.difference(new Date(), time)
           }
           // 结束了的话，就不用了倒计时了 status = 3
           else if (this.status === 3) {
+            // 但是要获得一些数据：报名用户（按报名时间排序）、排名情况、题目列表
+            this.$axios.get(this.$host + "/api/v1/contests/" + this.cid + '/ranking', {
+              responseType: 'json'
+            }).then(response => {
+              if (response.data['code'] === 1) {
+
+              } else {
+                ElMessage.error('获取比赛排名情况失败！请检查您的地址是否正确')
+              }
+            })
             return
           }
 
@@ -324,6 +352,10 @@ export default defineComponent({
               clearInterval(timer)
               // 提示，然后刷新
               ElMessage.info(message)
+              if (this.status === 2) {
+                // 强制提交
+                this.commit()
+              }
               this.$router.go(0)
             }
           }, 1000)
@@ -510,22 +542,33 @@ export default defineComponent({
 
     // 提交比赛
     commit() {
+      if (this.identity !== '普通用户') {
+        ElMessage.warning('只有报名的普通用户才能提交哦~')
+      }
+      // 完成比赛时间
+      this.finish_time = new Date()
+      this.difference(this.enter_time, this.finish_time)
       // 我需要传入，用户id，比赛id，用户完成了哪些题，用时情况，这样就能查询到这个比赛所有题目
       // 保存到比赛里（和用户多对多关系）,保存到 ContestInfoResult
       let pass_problems = []
       for (let index in this.results) {
         if (this.results[index] === '已通过') {
-          pass_problems.push(this.contest_problems[index])
+          pass_problems.push(this.contest_problems[index].id)
         }
       }
-      // this.$axios.post(this.$host + "/api/v1/contest/" + this.cid + '/info/', {
-      //       uid: this.user_id,
-      //       problems: option    // 1 未报名，进行报名操作
-      //     }, {
-      //       responseType: 'json'
-      //     }).then(response => {
-      //
-      // })
+      this.$axios.post(this.$host + "/api/v1/contest/" + this.cid + '/info/', {
+          uid: this.user_id,
+          problems: pass_problems,
+          spend_time: [this.remain_hours, this.remain_minutes, this.remain_seconds]
+          // 排名情况后台 crontab 里自己计算，设置这个人已完成比赛，报名比赛取消该比赛
+        }, {
+          responseType: 'json'
+        }).then(response => {
+          if (response.data['code'] === 1) {
+            ElMessage.success('提交成功，比赛结束后方可查看自己排名')
+            this.$router.go(-1)
+          }
+      })
 
     },
   }

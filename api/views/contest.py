@@ -6,9 +6,10 @@ from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.filters import OrderingFilter
 
-from ..models.contest import Contest
+from ..models.contest import Contest, ContestInfoResult
 from ..models.problem import Problem
 from ..models.user.contestorganizer import ContestOrganizer
+from ..models.user.participant import Participant
 from ..models.user.user import User
 from ..serializers.contest import ContestSerializer
 from ..serializers.problem import ProblemSerializer
@@ -34,12 +35,13 @@ class ContestListView(ListAPIView):
             # 返回给普通用户他们报名的比赛，或者竞赛发布者他们发布的正在进行的比赛
             uid = self.request.query_params['uid']
             user = User.objects.get(id=uid)
-            contest = Contest.objects.filter(is_start=True)
+            contests = Contest.objects.filter(is_start=True)
             if user.is_p:
-                return contest.filter(sign_up_user=uid)
+                p_contests = Participant.objects.get(user=user).sign_up_contests.all()
+                return contests & p_contests
             elif user.is_oc:
                 co = ContestOrganizer.objects.get(user=user)
-                return contest.filter(author=co)
+                return contests.filter(author=co)
         else:
             return None
 
@@ -170,4 +172,36 @@ class ContestSignView(APIView):
 
 # 用户提交比赛添加
 class ContestInfoView(APIView):
-    pass
+    @staticmethod
+    def post(request, cid):
+        # 排名情况后台 crontab 里自己计算，设置这个人已完成比赛，报名比赛取消该比赛
+        uid = request.data['uid']
+        problems = request.data['problems']
+        spend_time = request.data['spend_time']
+        # 换成 reduce 可，但这里就三条，固定的
+        spend_time_str = '{0}h{1}m{2}s'.format(spend_time[0], spend_time[1], spend_time[2])
+        contest = Contest.objects.get(id=cid)
+        user = User.objects.get(id=uid)
+        contest.commit_user.add(user)
+        cir = ContestInfoResult.objects.create(user_id=uid, contest=contest, spend_time=spend_time_str)
+        for pid in problems:
+            problem = Problem.objects.get(id=pid)
+            cir.pass_problems.add(problem)
+        cir.save()
+        p_user = Participant.objects.get(user=user)
+        p_user.sign_up_contests.remove(contest)
+        p_user.finished_contests.add(contest)
+        return Response({'code': 1})
+
+
+# 获取比赛排名情况
+class ContestRankingView(APIView):
+    @staticmethod
+    def get(request, cid):
+        try:
+            contest = Contest.objects.get(id=cid)
+        except Contest.DoesNotExist:
+            return Response({'code': 0})
+        commit_users = contest.commit_user.all()
+        print(commit_users)
+        return Response({'code': 1})

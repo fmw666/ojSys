@@ -2,7 +2,7 @@ import datetime
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from ..models.contest import Contest
+from ..models.contest import Contest, ContestInfoResult
 
 
 # d1 > d2  return 1
@@ -43,8 +43,10 @@ def compare(d1, d2):
 
 class CheckContestStatus(APIView):
 
-    @staticmethod
-    def get(request):
+    def set_contest_result(self):
+        pass
+
+    def get(self, request):
         # 清楚状态（比赛少的时候格式化一下）
         # clear_all_contests_status()
         contests = Contest.objects.all()
@@ -53,6 +55,7 @@ class CheckContestStatus(APIView):
         for contest in contests:
             # 不检查已经结束的比赛！节约大量时间
             if contest.is_end:
+                self.set_contest_result()
                 continue
             # 报名未开始
             dt_sign_up = contest.sign_up_start_date
@@ -92,6 +95,7 @@ class CheckContestStatus(APIView):
                 contest.is_start = False
                 contest.is_end = True
                 # 计算比赛结果，通过 contest ranking result 表
+                self.set_contest_result()
                 # 给发布者发短信
 
             contest.save()

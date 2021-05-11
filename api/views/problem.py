@@ -7,6 +7,7 @@ from rest_framework.filters import OrderingFilter
 
 from ..models.problem import Problem
 from ..models.user.participant import Participant
+from ..models.user.contestorganizer import ContestOrganizer
 from ..models.user.user import User
 from ..serializers.problem import ProblemSerializer
 
@@ -84,14 +85,42 @@ class ProblemListOfMineView(ListAPIView):
 
 class ProblemView(APIView):
     @staticmethod
-    def get(request, pid):
+    def get(request, iid):
         try:
-            problem = Problem.objects.get(id=pid)
+            problem = Problem.objects.get(id=iid)
         except Problem.DoesNotExist:
             raise Http404
 
         serializer = ProblemSerializer(problem)
         return Response(serializer.data)
+
+    @staticmethod
+    def post(request, iid):
+        try:
+            user = User.objects.get(id=iid)
+        except ContestOrganizer.DoesNotExist:
+            raise Http404
+        name = request.data['name']
+        message = request.data['message']
+        challenge = request.data['challenge']
+        input_example = request.data['input_example']
+        output_example = request.data['output_example']
+        alg_type = ALGS[request.data['alg_type']] if request.data['alg_type'] in ALGS else 'b'
+        ds_type = DSS[request.data['ds_type']] if request.data['ds_type'] in DSS else 'b'
+        header = HEADERS[request.data['header']] if request.data['header'] in HEADERS else 'a'
+
+        init_code = request.data['init_code']
+        test_code = request.data['test_code']
+        public = False if request.data['open'] == 'no' else True
+
+        try:
+            problem = Problem.objects.create(name=name, message=message, challenge=challenge, author=user,
+                                             input_example=input_example, output_example=output_example,
+                                             alg_type=alg_type, ds_type=ds_type, header=header,
+                                             init_code=init_code, test_code=test_code, public=public)
+            return Response({'code': 1})
+        except Problem.DoesNotExist:
+            return Response({'code': 0})
 
 
 # 排名情况

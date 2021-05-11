@@ -64,12 +64,13 @@ class Contest(models.Model):
 class ContestInfoResult(models.Model):
     contest = models.ForeignKey(Contest, related_name='contest_info', on_delete=models.CASCADE, verbose_name='比赛题目')
     user = models.ForeignKey(User, related_name='user_info', on_delete=models.CASCADE, verbose_name='比赛参与用户')
-    pass_problem = models.ForeignKey(Problem, verbose_name='用户完成题目', on_delete=models.DO_NOTHING)
+    pass_problems = models.ManyToManyField(Problem, verbose_name='用户完成题目')
+    spend_time = models.CharField(max_length=20, help_text='format as: 5h3m53s', default='0h0m0s')
     ranking = models.IntegerField(unique=False, blank=True, verbose_name='用户排名', default=0)
 
     def __str__(self):
-        return 'user: {0} in contest: {1}. pass_problem: {2}, ranking: {3}'\
-            .format(self.user.username, self.contest.name, self.pass_problem.name, self.ranking)
+        return 'user: {0} in contest: {1}. pass_problems: {2}, ranking: {3}'\
+            .format(self.user.username, self.contest.name, self.pass_problems, self.ranking)
 
     class Meta:
         verbose_name = '比赛-用户-信息记录（Contest Info Result）'

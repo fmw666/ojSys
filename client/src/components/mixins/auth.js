@@ -64,7 +64,6 @@ export default {
           this.problem_solved = response.data['participant']['solved_problems']
           this.problem_cnt = response.data['participant']['solved_problems'].length
           this.forum_post = response.data['forum_author']
-          console.log(response.data)
 
           for (let i=0; i<this.forum_post.length; i++) {
             this.like_cnt += this.forum_post[i]['like_cnt'].length

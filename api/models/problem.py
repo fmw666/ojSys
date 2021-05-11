@@ -52,7 +52,7 @@ for i in range(len(inputs)):
         raise Exception('输入值:{0}, {1}. 不等于正确值:{2}'.format(params[0],params[1],corrects[i]))
 '''
 
-    id = models.IntegerField(verbose_name='题号', primary_key=True)
+    id = models.BigAutoField(verbose_name='题号', primary_key=True)
     name = models.CharField(verbose_name='题目名称', max_length=100)
     message = models.TextField(verbose_name='题目描述信息', blank=False)
     input_example = models.TextField(verbose_name='输入样例', blank=True)

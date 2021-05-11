@@ -2,21 +2,40 @@
   <div id="ForumPost">
     <div class="container">
       <el-card>
-        <div class="title">发布帖子</div>
-        <el-form>
-          <el-form-item label="标题">
-            <el-input v-model="title"></el-input>
-          </el-form-item>
+        <div style="padding: 20px 40px 40px 20px;">
+          <div class="title">发布帖子</div>
 
-          <el-form-item label="内容">
-            <el-input type="textarea" v-model="content"></el-input>
-          </el-form-item>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form>
+                <el-form-item label="标题">
+                  <el-input v-model="title"></el-input>
+                </el-form-item>
 
-          <el-form-item>
-            <el-button type="primary" @click="publish">立即发布</el-button>
-            <el-button @click="reset">重置</el-button>
-          </el-form-item>
-        </el-form>
+                <el-form-item label="内容">
+                  <el-input type="textarea" rows="4" resize="none" v-model="content"></el-input>
+                </el-form-item>
+
+                <el-form-item>
+                  <el-button type="primary" @click="publish">立即发布</el-button>
+                  <el-button @click="reset">重置</el-button>
+                </el-form-item>
+              </el-form>
+            </el-col>
+
+            <el-col :span="3">
+            </el-col>
+
+            <el-col :span="9">
+              <div style="border-left: #ddd 1px solid; height: 60%; padding: 30px">
+                <ul>
+                  <li>内容应和谐友善</li>
+                  <li style="margin: 10px 0">希望您在论坛玩得愉快~</li>
+                </ul>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
       </el-card>
     </div>
   </div>
@@ -85,5 +104,10 @@ export default {
 </script>
 
 <style scoped>
-
+.title {
+  color: #3091f2;
+  font-size: 20px;
+  font-weight: bold;
+  margin: 10px 0 20px 0;
+}
 </style>

@@ -10,8 +10,16 @@
         <template #title>您好，{{username}}</template>
         <el-menu-item index="/account">个人中心</el-menu-item>
         <div v-if="identity === '竞赛发布者'">
-          <el-menu-item index="/contest_post">竞赛管理</el-menu-item>
-          <el-menu-item index="/problem_post">题库管理</el-menu-item>
+          <el-submenu index="/contest">
+            <template #title>竞赛管理</template>
+            <el-menu-item index="/contest_post">发布比赛</el-menu-item>
+            <el-menu-item index="/contest_list">查看比赛</el-menu-item>
+          </el-submenu>
+          <el-submenu index="/problem">
+            <template #title>题库管理</template>
+            <el-menu-item index="/problem_post">添加题目</el-menu-item>
+            <el-menu-item index="/problem_list">查看题目</el-menu-item>
+          </el-submenu>
         </div>
         <el-divider style="margin: 0"></el-divider>
         <el-menu-item index="/login" @click="logout()"><b>退出登录</b></el-menu-item>

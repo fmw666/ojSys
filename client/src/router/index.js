@@ -3,9 +3,11 @@ import Index from '../views/Index.vue'
 import Problems from '../views/problem/Problems.vue'
 import ProblemDetail from "../views/problem/ProblemDetail.vue";
 import ProblemPost from "../views/problem/ProblemPost.vue";
+import ProblemList from "../views/problem/ProblemList.vue";
 import ContestDetail from "../views/contest/ContestDetail.vue"
 import Contests from '../views/contest/Contests.vue'
 import ContestPost from "../views/contest/ContestPost.vue";
+import ContestList from "../views/contest/ContestList.vue";
 import Forum from '../views/forum/Forum.vue'
 import ForumDetail from '../views/forum/ForumDetail.vue'
 import ForumPost from "../views/forum/ForumPost.vue"
@@ -155,6 +157,22 @@ const routes = [
       index: 16,
     },
     component: ProblemPost
+  },
+  {
+    path: '/contest_list',
+    name: 'ContestList',
+    meta: {
+      index: 17,
+    },
+    component: ContestList
+  },
+  {
+    path: '/problem_list',
+    name: 'ProblemList',
+    meta: {
+      index: 18,
+    },
+    component: ProblemList
   },
   {
     path: "/:catchAll(.*)",

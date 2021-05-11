@@ -29,23 +29,41 @@
               </div>
 
 
-              <el-transfer
-                v-model="my_problems"
-                filterable
-                :filter-method="filterMethod"
-                filter-placeholder="请输入要查找的题目"
-                :data="my_problems_data"
-                :titles="['我的题目列表', '已选择题目']"
-              />
+              <el-row :gutter="20">
+                <el-col :span="6">
+                  wode
+                </el-col>
 
-              <el-transfer
-                v-model="other_problems"
-                filterable
-                :filter-method="filterMethod"
-                filter-placeholder="请输入要查找的题目"
-                :data="other_problems_data"
-                :titles="['其他题目列表', '已选择题目']"
-              />
+                <el-col :span="18">
+                  <el-transfer
+                    v-model="my_problems"
+                    filterable
+                    :filter-method="filterMethod"
+                    filter-placeholder="请输入要查找的题目"
+                    :data="my_problems_data"
+                    :titles="['我的题目列表', '已选择题目']"
+                  />
+                </el-col>
+              </el-row>
+
+
+              <el-row :gutter="20">
+                <el-col :span="18">
+                  <el-transfer
+                    v-model="other_problems"
+                    filterable
+                    :filter-method="filterMethod"
+                    filter-placeholder="请输入要查找的题目"
+                    :data="other_problems_data"
+                    :titles="['其他题目列表', '已选择题目']"
+                  />
+                </el-col>
+
+                <el-col :span="6">
+                  as
+                </el-col>
+              </el-row>
+
 
               <div>
                 <el-date-picker
@@ -217,7 +235,7 @@ export default {
 <style scoped>
 .title {
   color: #3091f2;
-  font-size: 17px;
+  font-size: 20px;
   font-weight: bold;
   margin: 10px 0 20px 0;
 }

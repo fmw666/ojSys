@@ -40,8 +40,12 @@ class ContestAdmin(admin.ModelAdmin):
 
 @admin.register(ContestInfoResult)
 class ContestInfoResultAdmin(admin.ModelAdmin):
-    list_display = ['contest', 'user', 'ranking', 'pass_problem']
+    list_display = ['contest', 'user', 'spend_time', 'ranking', 'pass_problems_cnt']
     list_filter = ('contest', 'user', 'ranking')
+
+    def pass_problems_cnt(self, obj):
+        return obj.pass_problems.count()
+    pass_problems_cnt.short_description = '通过题目数'
 
 
 @admin.register(Forum)

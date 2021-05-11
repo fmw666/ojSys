@@ -10,6 +10,8 @@ urls = [
     url(r'^contests/(?P<cid>\d+)/problems/$', contest.ContestAllProblemsView.as_view()),
     # 发布比赛
     url(r'^contests/post/(?P<uid>\d+)$', contest.ContestPostView.as_view()),
+    # 比赛排名情况
+    url(r'^contests/(?P<cid>\d+)/ranking/$', contest.ContestRankingView.as_view()),
 
     # 用户报名比赛
     url(r'^contest/(?P<cid>\d+)/sign/$', contest.ContestSignView.as_view()),
