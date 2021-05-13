@@ -131,3 +131,28 @@ class RankingView(APIView):
         return Response(Participant.objects.values('user__username')
                         .annotate(Count('solved_problems'))
                         .order_by('-solved_problems__count'))
+
+
+# 得到题目 id
+class ProblemIdView(APIView):
+    @staticmethod
+    def get(request):
+        option = request.query_params['option']
+
+        cur_id = request.query_params['cur_id']
+        problems = Problem.objects.filter(public=True).order_by('id')
+        for index, problem in enumerate(problems):
+            if str(problem.id) == cur_id:
+                # 下一题
+                if option == '1':
+                    if index + 1 < len(problems):
+                        return Response({'code': 1, 'pid': problems[index + 1].id})
+                    else:
+                        return Response({'code': 1, 'pid': problems[0].id})
+                # 上一题
+                elif option == '-1':
+                    if index - 1 >= 0:
+                        return Response({'code': 1, 'pid': problems[index - 1].id})
+                    else:
+                        return Response({'code': 1, 'pid': problems[len(problems) - 1].id})
+        return Response({'code': 0})

@@ -31,8 +31,8 @@
       <div class="extra">
         <el-button @click="to_path('/problems')" size="medium" icon="el-icon-back" round>返回列表</el-button>
         <el-button-group style="float: right">
-          <el-button size="medium" round icon="el-icon-arrow-left">上一题</el-button>
-          <el-button size="medium" round>下一题<i class="el-icon-arrow-right el-icon--right"></i></el-button>
+          <el-button size="medium" @click="to_problem(-1)" round icon="el-icon-arrow-left">上一题</el-button>
+          <el-button size="medium" @click="to_problem(1)" round>下一题<i class="el-icon-arrow-right el-icon--right"></i></el-button>
         </el-button-group>
       </div>
     </div>
@@ -111,12 +111,35 @@ export default defineComponent({
 
     }
   },
+  watch: {
+　　'$route' (to, from) {
+　 　this.$router.go(0);
+　　  }
+  },
   mounted() {
     this.login_tip(true)
     this.init_data()
 
   },
   methods: {
+    // 上一题
+    to_problem(option) {
+      this.$axios.get(this.$host + '/api/v1/problems/id',{
+        params: {
+          cur_id: this.pid,
+          option: option
+        },
+        responseType: 'json'
+      }).then(response => {
+        if (response.data.code === 1) {
+          console.log(response.data.pid)
+          this.to_path('/problems/' + response.data.pid)
+        } else {
+          ElMessage.error('获取题目失败')
+        }
+      })
+    },
+
     onEditorCodeChange (newCode) {
       this.$emit('update:value', newCode)
     },

@@ -11,4 +11,6 @@ urls = [
     url(r'^problems/ranking/$', problem.RankingView.as_view()),
     # 查询发布者自己发布的题目
     url(r'^problems/my/$', problem.ProblemListOfMineView.as_view()),
+    # 查询发布者自己发布的题目
+    url(r'^problems/id/$', problem.ProblemIdView.as_view()),
 ]
