@@ -1,4 +1,6 @@
 import datetime
+
+from django.db.models import Count
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -43,8 +45,18 @@ def compare(d1, d2):
 
 class CheckContestStatus(APIView):
 
-    def set_contest_result(self):
-        pass
+    # 按比赛速度排名
+    @staticmethod
+    def set_contest_result(contest):
+        cirs = ContestInfoResult.objects.filter(contest=contest).annotate(Count('pass_problems'))\
+            .order_by('-pass_problems__count', 'spend_time')
+
+        # foreach  and  insert
+        ranking = 1
+        for cir in cirs:
+            cir.ranking = ranking
+            ranking += 1
+            cir.save()
 
     def get(self, request):
         # 清楚状态（比赛少的时候格式化一下）
@@ -55,7 +67,8 @@ class CheckContestStatus(APIView):
         for contest in contests:
             # 不检查已经结束的比赛！节约大量时间
             if contest.is_end:
-                self.set_contest_result()
+                # 正式项目中不用运行，因为我这里很多测试数据
+                # self.set_contest_result(contest)
                 continue
             # 报名未开始
             dt_sign_up = contest.sign_up_start_date
@@ -95,7 +108,7 @@ class CheckContestStatus(APIView):
                 contest.is_start = False
                 contest.is_end = True
                 # 计算比赛结果，通过 contest ranking result 表
-                self.set_contest_result()
+                self.set_contest_result(contest)
                 # 给发布者发短信
 
             contest.save()

@@ -15,6 +15,15 @@ from ..serializers.contest import ContestSerializer
 from ..serializers.problem import ProblemSerializer
 
 
+class ContestsView(ListAPIView):
+    ordering_fields = ['id', ]
+    serializer_class = ContestSerializer
+
+    def get_queryset(self):
+        uid = self.request.query_params['uid']
+        return Contest.objects.filter(author_id=uid)
+
+
 class ContestListView(ListAPIView):
     """例题列表数据查询"""
 
@@ -24,6 +33,7 @@ class ContestListView(ListAPIView):
     serializer_class = ContestSerializer
 
     def get_queryset(self):
+
         status = self.request.query_params['status'] if 'status' in self.request.query_params else 'sign'
         if status == 'sign':
             return Contest.objects.filter(is_sign=True)
@@ -202,6 +212,27 @@ class ContestRankingView(APIView):
             contest = Contest.objects.get(id=cid)
         except Contest.DoesNotExist:
             return Response({'code': 0})
+        # 报名提交用户
         commit_users = contest.commit_user.all()
-        print(commit_users)
-        return Response({'code': 1})
+        commit_users_json = []
+        for cu in commit_users:
+            commit_users_json.append([cu.username, cu.id])
+
+        # 排名情况
+        cirs = ContestInfoResult.objects.all().order_by('ranking')
+        # 排名记录
+        rankings_json = []
+        for cir in cirs:
+            rj = {'user': [], 'pass_problems': [], 'spend_time': []}
+            rj['user'].append([cir.user.id, cir.user.username])
+            rj['pass_problems'].append([[pp.id, pp.name] for pp in cir.pass_problems.all()])
+            rj['spend_time'].append(cir.spend_time)
+            rankings_json.append(rj)
+
+        # 比赛所有题目
+        problems_json = []
+        for p in contest.problems.all():
+            problems_json.append([p.name, p.id])
+
+        return Response({'code': 1, 'commit_users': commit_users_json,
+                         'rankings': rankings_json, 'problems': problems_json})

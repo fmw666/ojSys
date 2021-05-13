@@ -34,11 +34,48 @@
         <el-col :span="12">
           <div class="msg">赛后情况</div>
           <div class="content">提交用户（排名不分先后）：</div>
+          <div style="margin-bottom: 26px;">
+            <el-button style="padding-bottom: 0; margin: 0 10px 0 0" type="text" v-for="cu in end_commit_users">
+              {{cu[0]}}
+            </el-button>
+          </div>
           <div class="content">排名情况：</div>
+          <div class="tables">
+            <el-table
+              :data="end_rankings_table"
+              style="width: 100%">
+              <el-table-column
+                prop="rank"
+                label="排名"
+                min-width="16%">
+              </el-table-column>
+              <el-table-column
+                prop="user"
+                label="用户名"
+                min-width="28%">
+              </el-table-column>
+              <el-table-column
+                prop="cnt"
+                label="完成题数"
+                min-width="26%">
+              </el-table-column>
+              <el-table-column
+                prop="spend_time"
+                label="用时"
+                min-width="30%">
+              </el-table-column>
+            </el-table>
+          </div>
         </el-col>
 
         <el-col :span="12">
           <div class="msg">题目列表</div>
+          <div style="margin-left: 30px; font-size: 15px; margin-bottom: 10px">题目总数：</div>
+          <div style="margin-left: 30px">
+            <div v-for="(p, index) in end_problems">
+              {{index + 1}}、<el-button @click="to_path('/problems/' + p[1])" type="text" style="font-size: 16px; padding-bottom: 0">{{p[0]}}</el-button>
+            </div>
+          </div>
         </el-col>
 
         <el-divider></el-divider>
@@ -122,7 +159,7 @@
           <div class="text_input">
             <div class="code_text">
               <label>
-                <textarea v-model="contest_problems[page-1]['init_code']" style="height: 100%; width: 100%; resize: none" id="code_input" ref="textarea" rows="40" cols="80" autofocus></textarea>
+                <textarea v-model="contest_problems[page-1]['init_code']" autofocus style="height: 100%; width: 100%; resize: none" id="code_input" ref="textarea" rows="40" cols="80"></textarea>
               </label>
             </div>
             <div class="extra">
@@ -226,9 +263,11 @@ export default defineComponent({
       finish_time: new Date(),
 
       // 比赛结束数据
-      end_signed_users: [],
+      end_commit_users: [],
       end_rankings: [],
       end_problems: [],
+      end_rankings_table: [],
+      end_rankings_detail: [],
     }
   },
   mounted() {
@@ -314,7 +353,7 @@ export default defineComponent({
               type: 'success',
               duration: 10000,
               showClose: true,
-              message: '比赛已开始，已为您自动计时，您最终完成的时间将作为您最后成绩的一部分（此消息存在 10s）'
+              message: '，您最终完成的时间将作为您最后成绩的一部分（此消息存在 10s）'
             });
             this.$notify.info({
               title: '提示',
@@ -336,7 +375,21 @@ export default defineComponent({
               responseType: 'json'
             }).then(response => {
               if (response.data['code'] === 1) {
+                console.log(response.data)
+                this.end_commit_users = response.data['commit_users']
+                this.end_rankings = response.data['rankings']
+                this.end_problems = response.data['problems']
 
+                for (let index in this.end_rankings) {
+                  this.end_rankings_table.push({
+                    'user': this.end_rankings[index]['user'][0][1],
+                    'uid': this.end_rankings[index]['user'][0][0],
+                    'rank': parseInt(index,10) + 1,
+                    'spend_time': this.end_rankings[index]['spend_time'][0],
+                    'cnt': this.end_rankings[index]['pass_problems'][0].length,
+                  })
+                }
+                console.log(this.end_rankings_table)
               } else {
                 ElMessage.error('获取比赛排名情况失败！请检查您的地址是否正确')
               }
@@ -621,6 +674,13 @@ export default defineComponent({
   flex: 1;
 }
 
+.tables  ::v-deep(.el-table__expanded-cell) {
+  padding: 20px;
+}
+
+.tables  ::v-deep(.el-table__expanded-cell) div {
+  margin-bottom: 10px;
+}
 
 .tags > span {
   margin-right: 20px;
