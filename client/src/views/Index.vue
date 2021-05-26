@@ -47,7 +47,7 @@
             </span>
             <span class="shoes-size">
               比赛：
-              <span>{{problem_cnt}} / {{total_contest_cnt}}</span>
+              <span>{{problem_cnt}} / 8</span>
             </span>
           </div>
           <a href="#" @click="to_path('/account')" class="by-btn">个人中心</a>
