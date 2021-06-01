@@ -24,7 +24,7 @@
           <h2>算法竞赛区</h2>
           <div class="shoes-size">
             举办方：
-            <span>浙江大学、阿里巴巴有限公司等</span>
+            <span style="color: #5a5a5a">浙江大学、阿里巴巴有限公司等</span>
           </div>
           <a href="#" class="by-btn">Let's go</a>
         </div>
