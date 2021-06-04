@@ -2,23 +2,24 @@
   "name": "client",
   "version": "0.0.0",
   "scripts": {
+    "serve": "vite --config vite.config.js",
     "dev": "vite",
     "build": "vite build"
   },
   "dependencies": {
-    "axios": "^0.21.1",
-    "codemirror": "^5.61.0",
-    "element-plus": "^1.0.1-beta.23",
-    "vue": "^3.0.4",
+    "axios": "0.21.1",
+    "codemirror": "5.61.0",
+    "element-plus": "1.0.1-beta.23",
+    "vue": "3.0.5",
     "vue-axios": "2.1.5",
-    "vue-codemirror": "^4.0.6",
-    "vue-router": "^4.0.0-0",
-    "vue3-ace-editor": "^2.0.2",
-    "vuex": "^4.0.0-0"
+    "vue-codemirror": "4.0.6",
+    "vue-router": "4.0.2",
+    "vue3-ace-editor": "2.0.2",
+    "vuex": "4.0.0-rc.2"
   },
   "devDependencies": {
-    "@vue/compiler-sfc": "^3.0.4",
-    "babel-plugin-component": "^1.1.1",
-    "vite": "^1.0.0-rc.13"
+    "@vue/compiler-sfc": "3.0.11",
+    "babel-plugin-component": "1.1.1",
+    "vite": "1.0.0-rc.13"
   }
 }
