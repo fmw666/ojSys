@@ -12,10 +12,9 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
-import django_filters
 import datetime
-from django.conf import settings
-from rest_framework.settings import APISettings
+
+import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -87,13 +86,10 @@ DATABASES = {
     # }
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '127.0.0.1',
-        'PORT': 3306,
-        'USER': 'admin',
-        'PASSWORD': 'admin',
-        'NAME': 'oj_sys'
+        **config.MYSQL_CONFIG
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -134,41 +130,16 @@ STATIC_URL = '/static/'
 # CORS 跨域配置
 CORS_ALLOW_CREDENTIALS = True
 # CORS_ORIGIN_ALLOW_ALL = True
-CORS_ORIGIN_WHITELIST = (
+CORS_ORIGIN_WHITELIST = [
     'http://127.0.0.1:3000',
     'http://localhost:3000',
 
     'http://127.0.0.1:3001',
     'http://localhost:3001',
-)
-# SESSION_COOKIE_SAMESITE = None
-# CORS_ALLOW_HEADERS = (
-#     'XMLHttpRequest',
-#     'X_FILENAME',
-#     'accept',
-#     'accept-encoding',
-#     'authorization',
-#     'content-type',
-#     'dnt',
-#     'origin',
-#     'user-agent',
-#     'x-csrftoken',
-#     'x-requested-with',
-#     'Pragma',
-# )
-# CORS_ALLOW_METHODS = (
-#     'DELETE',
-#     'GET',
-#     'OPTIONS',
-#     'PATCH',
-#     'POST',
-#     'PUT',
-#     'VIEW',
-# )
-# CSRF_TRUSTED_ORIGINS = (
-#     'localhost:3000',
-#     '127.0.0.1:3000'
-# )
+    
+    config.FRONT_URL
+]
+
 
 # DRF 配置
 REST_FRAMEWORK = {
@@ -203,7 +174,7 @@ CACHES = {
     # 缓存
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/0",
+        "LOCATION": "redis://" + config.REDIS_SERVER + "/0",
         "OPTION": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -211,7 +182,7 @@ CACHES = {
     # 缓存 session
     "session": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://" + config.REDIS_SERVER + "/1",
         "OPTION": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -219,7 +190,7 @@ CACHES = {
     # 存储验证码
     "verify_codes": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/2",
+        "LOCATION": "redis://" + config.REDIS_SERVER + "/2",
         "OPTION": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -277,15 +248,12 @@ JWT_AUTH = {
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'server.utils.auth.jwt_response_payload_handler'
 }
 
-# 修改 Django 用户认证后端类
-AUTHENTICATION_BACKENDS = ['server.utils.auth.UsernameMobileAuthBackend']
-
 # 邮箱配置
 EMAIL_USE_SSL = True
-EMAIL_HOST = 'smtp.qq.com'  # 如果是 163 改成 smtp.163.com
+EMAIL_HOST = 'smtp.qq.com'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = "784958034@qq.com"  # 帐号
-EMAIL_HOST_PASSWORD = "cpsongpnazokbbfb"  # 授权码（****）
+EMAIL_HOST_USER = config.EMAIL_HOST['USER']  # 帐号
+EMAIL_HOST_PASSWORD = config.EMAIL_HOST['PASSWORD']  # 授权码（****）
 # 默认邮件
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 

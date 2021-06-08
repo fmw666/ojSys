@@ -1,6 +1,5 @@
-from datetime import timedelta
-
 from celery import Celery
+from config import REDIS_SERVER
 
 import os
 
@@ -8,7 +7,7 @@ import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "server.settings")
 
 # 1. 创建 celery 实例对象
-celery_app = Celery('ojsys', broker="redis://127.0.0.1:6379", backend="redis://127.0.0.1:6379")
+celery_app = Celery('ojsys', broker="redis://" + REDIS_SERVER, backend="redis://" + REDIS_SERVER)
 
 # 2. 加载配置文件
 celery_app.config_from_object('celery_tasks.config')

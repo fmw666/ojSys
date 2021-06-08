@@ -14,9 +14,14 @@
 
 </div>
 
-+ [🎉 项目介绍](#)
-+ [🎯 待办事件](#🎯-待办事件)
-+ [💬 依赖和操作说明文档](#💬-依赖和操作说明文档)
+**目录**
+
++ 🎉 **[项目介绍](#-项目介绍)**
++ 🎯 **[待办事件](#-待办事件)**
++ 💬 **[依赖和操作说明文档](#-依赖和操作说明文档)**
++ 🚀 **[项目启动](#-项目启动)**
+
+<br>
 
 ## 🎉 项目介绍
 
@@ -38,6 +43,32 @@
 ### 开发团队
 
 + [fmw666](https://github.com/fmw666)
+
+### 目录结构
+
+```
+ojSys
+├── api
+│   ├── readme.txt  # how to run？（介绍及运行说明）
+│   ├── main.py     # main entrance（程序运行主入口）
+│   ├── xxx.py      # assistant program（辅助程序，数量不定）
+│   ├── assets      # 资源存放文件夹
+│   │   ├── ...
+├── celery_tasks
+│   ├── readme.txt  # how to run？（介绍及运行说明）
+│   ├── main.py     # main entrance（程序运行主入口）
+│   ├── xxx.py      # assistant program（辅助程序，数量不定）
+│   ├── assets      # 资源存放文件夹
+│   │   ├── ...
+├── client
+├── server
+
+├── .gitignore
+├── README-en.md
+├── README.md
+├── manage.py
+├── requirements.txt
+```
 
 ## 🎯 待办事件
 
@@ -126,8 +157,29 @@
   cron.ini　　需要请求的URL清单配置，配置格式：时间(秒) 空格 Url地址，一行为一个任务线程
   ```
 
-### Vue 问题
+## 🚀 项目启动
 
-+ mixin 的 data 在页面展示时，显示为 init 值，但其实本身内容是有的！
-  
++ 修改配置文件
 
+  其它配置均可默认，但是 *邮箱服务器* 和 *容联云通讯* 必须写入配置
+
++ 开启控制台 1 —— drf
+
+  ```bash
+  # 项目根路径下
+  ojSys > python manage.py runserver 8000
+  ```
+
++ 开启控制台 2 —— celery
+
+  ```bash
+  # 项目根路径下
+  ojSys > celery -A celery_tasks.main worker -l info
+  ```
+
++ 开启控制台 3 —— vue
+
+  ```bash
+  # 项目根路径的 client 目录下
+  ojSys/client > npm run serve
+  ```

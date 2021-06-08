@@ -115,6 +115,7 @@ export default {
     // 带条件跳转
     to_path_with_tips(name, cid) {
       if (name === 'start') {
+        
         this.centerDialogVisible = true
       } else {
         this.to_path('/contests/' + cid)

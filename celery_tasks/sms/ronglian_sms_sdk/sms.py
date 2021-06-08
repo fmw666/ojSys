@@ -1,8 +1,10 @@
 from .SmsSDK import SmsSDK
+from config import SMS_CONFIG
 
-accId = '8a216da878005a8001782111e32e0cb5'
-accToken = '73464666c177436e9fffbf821aebf443'
-appId = '8a216da878005a8001782111e4070cbc'
+
+accId = SMS_CONFIG['accId']
+accToken = SMS_CONFIG['accToken']
+appId = SMS_CONFIG['appId']
 
 
 def send_message(tid: str, mobile: str, datas: tuple):

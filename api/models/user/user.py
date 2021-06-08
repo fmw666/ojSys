@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from itsdangerous import TimedJSONWebSignatureSerializer as TJWSSerializer, BadData
 from django.conf import settings
+from config import FRONT_URL
 
 
 class User(AbstractUser):
@@ -39,7 +40,7 @@ class User(AbstractUser):
         token = serializer.dumps(data).decode()
 
         # 3. 拼接激活 url
-        return 'http://127.0.0.1:3000/verify_email?token=' + token
+        return FRONT_URL + '/verify_email?token=' + token
 
     @staticmethod
     def check_verify_email_token(token):
