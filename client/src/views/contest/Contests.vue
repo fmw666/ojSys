@@ -11,7 +11,7 @@
       <el-card style="width: 100%">
         <el-tabs style="margin: 0 20px" v-model="activeName" @tab-click="handleClick">
 
-          <el-tab-pane v-for="tp in tabPanes" :label="tp.label" :name="tp.name">
+          <el-tab-pane v-for="tp in tabPanes" :label="tp.label" :name="tp.name" :key="tp">
 
             <transition-group>
               <el-card v-for="contest in contests" :key="contest.id" @click="to_path_with_tips(tp.name, contest.id)" class="items" shadow="always">
