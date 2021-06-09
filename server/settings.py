@@ -136,6 +136,9 @@ CORS_ORIGIN_WHITELIST = [
 
     'http://127.0.0.1:3001',
     'http://localhost:3001',
+
+    'http://127.0.0.1:8080',
+    'http://localhost:8080',
     
     config.FRONT_URL
 ]

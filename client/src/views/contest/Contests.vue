@@ -11,10 +11,17 @@
       <el-card style="width: 100%">
         <el-tabs style="margin: 0 20px" v-model="activeName" @tab-click="handleClick">
 
-          <el-tab-pane v-for="tp in tabPanes" :label="tp.label" :name="tp.name" :key="tp">
+          <el-tab-pane v-for="tp in tabPanes"
+                       :label="tp.label"
+                       :name="tp.name"
+                       :key="tp"
+                       :disabled="tp.disable">
 
             <transition-group>
-              <el-card v-for="contest in contests" :key="contest.id" @click="to_path_with_tips(tp.name, contest.id)" class="items" shadow="always">
+              <el-card v-for="contest in contests"
+                       :key="contest.id"
+                       @click="to_path_with_tips(tp.name, contest.id)"
+                       class="items" shadow="always">
                 <div class="card-left">
                   <h4 class="header">{{contest.name}}</h4>
                   <span class="holder">——主办方：{{contest['author_username']}}</span>
@@ -86,6 +93,7 @@
 
 <script>
 import {Base, Auth} from '../../components/mixins'
+import {ElMessage} from "element-plus";
 export default {
   mixins: [Base, Auth],
   data() {
@@ -104,18 +112,23 @@ export default {
       centerDialogVisible: false,
 
       tabPanes: [
-        { label: '⭐ 报名中', name: 'sign'},
-        { label: '💬 未开始', name: 'no'},
-        { label: '🎈 已结束', name: 'end'},
-        { label: '🚀 进行中（仅能查看已报名的比赛）', name: 'start'},
+        { label: '⭐ 报名中', name: 'sign', disable: false},
+        { label: '💬 未开始', name: 'no', disable: false},
+        { label: '🎈 已结束', name: 'end', disable: false},
+        { label: '🚀 进行中（仅能查看已报名的比赛）', name: 'start', disable: false},
       ]
     };
+  },
+  mounted() {
+    // this.cat = this.get_query_string('cat')
+    this.get_contests()
+    console.log('contest')
+    console.log(this.login_flag)
   },
   methods: {
     // 带条件跳转
     to_path_with_tips(name, cid) {
       if (name === 'start') {
-        
         this.centerDialogVisible = true
       } else {
         this.to_path('/contests/' + cid)
@@ -133,9 +146,16 @@ export default {
     },
     // 点击 Tabs 标签页触发事件
     handleClick() {
-      // 设置为第一页
-      this.page = 1
-      this.get_contests();
+      // 如果未登录
+      if (this.activeName === 'start' && this.login_flag === false) {
+        this.tabPanes[this.tabPanes.length - 1].disable = true
+
+
+      } else {
+        // 设置为第一页
+        this.page = 1;
+        this.get_contests();
+      }
     },
 
     get_contests() {
@@ -172,14 +192,6 @@ export default {
       }
     }
   },
-  computed: {
-
-  },
-  mounted() {
-    // this.cat = this.get_query_string('cat')
-
-    this.get_contests()
-  }
 }
 </script>
 

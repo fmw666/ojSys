@@ -3,6 +3,8 @@ export default {
     return {
       user_id: sessionStorage.user_id || localStorage.user_id,
       token: sessionStorage.token || localStorage.token,
+      // 是否登录
+      login_flag: false,
       // 用户名
       username: '',
       // 身份
@@ -13,8 +15,6 @@ export default {
       email: '',
       // 邮箱激活状态
       email_active: '',
-      // 是否登录
-      login_flag: false,
       // 刷过的题
       problem_solved: [],
       // 刷题数
@@ -25,6 +25,9 @@ export default {
       like_cnt: 0,
 
     }
+  },
+  mounted() {
+    this.login()
   },
   methods: {
     // 退出登录
@@ -44,26 +47,26 @@ export default {
           'Authorization': 'JWT ' + this.token
         },
         responseType: 'json'
-        }).then(response => {
+        }).then(res => {
           // 加载用户数据
-          this.user_id = response.data.id;
-          this.username = response.data.username;
-          this.mobile = response.data.mobile;
-          this.email = response.data.email;
-          this.email_active = response.data['email_active'];
+          this.user_id = res.data.id;
+          this.username = res.data.username;
+          this.mobile = res.data.mobile;
+          this.email = res.data.email;
+          this.email_active = res.data['email_active'];
           this.login_flag = true
 
-          if (response.data['is_p'] === false && response.data['is_oc'] === false) {
+          if (res.data['is_p'] === false && res.data['is_oc'] === false) {
             this.identity = '管理员'
-          } else if (response.data['is_p'] === true) {
+          } else if (res.data['is_p'] === true) {
             this.identity = '普通用户'
-          } else if (response.data['is_oc'] === true) {
+          } else if (res.data['is_oc'] === true) {
             this.identity = '竞赛发布者'
           }
 
-          this.problem_solved = response.data['participant']['solved_problems']
-          this.problem_cnt = response.data['participant']['solved_problems'].length
-          this.forum_post = response.data['forum_author']
+          this.problem_solved = res.data['participant']['solved_problems']
+          this.problem_cnt = res.data['participant']['solved_problems'].length
+          this.forum_post = res.data['forum_author']
 
           for (let i=0; i<this.forum_post.length; i++) {
             this.like_cnt += this.forum_post[i]['like_cnt'].length
