@@ -1,6 +1,7 @@
+# rest_framework
 from rest_framework import serializers
 
-from .problem import ProblemSerializer
+# models
 from ..models.contest import Contest
 
 

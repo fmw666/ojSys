@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models.user.user import User
-from .models.user.contestorganizer import ContestOrganizer
+from .models.user.organizer import Organizer
 from .models.user.participant import Participant
 from .models.problem import Problem
 from .models.contest import Contest, ContestInfoResult
@@ -9,15 +9,14 @@ from .models.forum import Forum, ForumReply
 
 # Register your models here.
 
-
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['id', 'username', 'is_p', 'is_oc', 'is_admin']
-    list_filter = ('is_p', 'is_oc', 'is_admin')
+    list_display = ['id', 'username', 'is_p', 'is_o', 'is_admin']
+    list_filter = ('is_p', 'is_o', 'is_admin')
 
 
-@admin.register(ContestOrganizer)
-class ContestOrganizerAdmin(admin.ModelAdmin):
+@admin.register(Organizer)
+class OrganizerAdmin(admin.ModelAdmin):
     pass
 
 

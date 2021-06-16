@@ -1,10 +1,13 @@
+# utils
 import datetime
-from django.utils import timezone
 
+# django
+from django.utils import timezone
 from django.db import models
 
+# models
 from .problem import Problem
-from .user.contestorganizer import ContestOrganizer
+from .user.organizer import Organizer
 from .user.user import User
 
 
@@ -16,7 +19,7 @@ class Contest(models.Model):
     requirement = models.TextField(verbose_name='比赛要求信息', blank=True)
     problems = models.ManyToManyField(Problem)
 
-    author = models.ForeignKey(ContestOrganizer, verbose_name='机构', on_delete=models.CASCADE, related_name='出题方')
+    author = models.ForeignKey(Organizer, verbose_name='机构', on_delete=models.CASCADE, related_name='出题方')
     sign_up_start_date = models.DateTimeField(verbose_name='报名开始时间', help_text='Format is: yyyy-mm-dd hh:mm',
                                               blank=False, default=timezone.now)
     sign_up_end_date = models.DateTimeField(verbose_name='报名结束时间', help_text='Format is: yyyy-mm-dd hh:mm',

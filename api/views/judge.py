@@ -1,10 +1,13 @@
+# rest_framework
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+# celery
 from celery_tasks.judge.tasks import judge_code
 from celery.result import AsyncResult
 from celery_tasks.main import celery_app
 
+# models
 from ..models.problem import Problem
 from ..models.user.participant import Participant
 

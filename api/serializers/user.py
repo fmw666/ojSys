@@ -1,11 +1,21 @@
+# rest_framework
 from rest_framework import serializers
-import re
-from django_redis import get_redis_connection
 from rest_framework_jwt.settings import api_settings
 
+# utils
+import re
+
+# django
+from django_redis import get_redis_connection
+
+# serializer
 from .forum import ForumSerializer
+
+# models
 from ..models.user.user import User
 from ..models.user.participant import Participant
+
+# celery
 from celery_tasks.email.tasks import send_verify_email
 
 

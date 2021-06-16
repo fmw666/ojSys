@@ -1,16 +1,23 @@
+# utils
 import datetime
 
+# django
 from django.http import Http404
+
+# rest_framework
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.filters import OrderingFilter
 
+# models
 from ..models.contest import Contest, ContestInfoResult
 from ..models.problem import Problem
-from ..models.user.contestorganizer import ContestOrganizer
+from ..models.user.organizer import Organizer
 from ..models.user.participant import Participant
 from ..models.user.user import User
+
+# serializer
 from ..serializers.contest import ContestSerializer
 from ..serializers.problem import ProblemSerializer
 
@@ -50,7 +57,7 @@ class ContestListView(ListAPIView):
                 p_contests = Participant.objects.get(user=user).sign_up_contests.all()
                 return contests & p_contests
             elif user.is_oc:
-                co = ContestOrganizer.objects.get(user=user)
+                co = Organizer.objects.get(user=user)
                 return contests.filter(author=co)
         else:
             return None
@@ -123,7 +130,7 @@ class ContestPostView(APIView):
         contest_start_date = date_serializer(request.data['date_contest'][0])
         contest_end_date = date_serializer(request.data['date_contest'][1])
 
-        author = ContestOrganizer.objects.get(user_id=uid)
+        author = Organizer.objects.get(user_id=uid)
         contest = Contest.objects.create(name=name, message=message, author=author, reward=reward, requirement=require,
                                          sign_up_start_date=sign_up_start_date, sign_up_end_date=sign_up_end_date,
                                          contest_start_date=contest_start_date, contest_end_date=contest_end_date)

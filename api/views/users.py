@@ -1,12 +1,18 @@
+# django
 from django_redis import get_redis_connection
+
+# rest_framework
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
+# models
 from ..models.user.user import User
-from ..serializers.users import CreateUserSerializer, UserDetailSerializer, EmailSerializer
+
+# serializer
+from ..serializers.user import CreateUserSerializer, UserDetailSerializer, EmailSerializer
 
 
 class UserView(CreateAPIView):

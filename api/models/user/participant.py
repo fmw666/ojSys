@@ -1,11 +1,13 @@
+# django
 from django.db import models
 
+# models
 from .user import User
 from ..problem import Problem
 from ..contest import Contest
 
 
-# 普通用户
+# 竞赛参与者
 class Participant(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, default='')
 
@@ -14,7 +16,7 @@ class Participant(models.Model):
     finished_contests = models.ManyToManyField(Contest, verbose_name='已完成的竞赛', blank=True, related_name='finished_contests')
 
     class Meta:
-        verbose_name = '普通用户（user）'
+        verbose_name = '用户-竞赛参与者（participant）'
         verbose_name_plural = verbose_name
 
     def __str__(self):

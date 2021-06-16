@@ -1,11 +1,17 @@
+# django
 from django.http import Http404
+
+# rest_framework
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.filters import OrderingFilter
 
+# models
 from ..models.forum import Forum
 from ..models.user.user import User
+
+# serializer
 from ..serializers.forum import ForumSerializer
 
 

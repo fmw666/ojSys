@@ -1,14 +1,20 @@
+# django
 from django.db.models import Count
 from django.http import Http404
+
+# rest_framework
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.filters import OrderingFilter
 
+# models
 from ..models.problem import Problem
 from ..models.user.participant import Participant
-from ..models.user.contestorganizer import ContestOrganizer
+from ..models.user.organizer import Organizer
 from ..models.user.user import User
+
+# serializer
 from ..serializers.problem import ProblemSerializer
 
 ALGS = {
@@ -98,7 +104,7 @@ class ProblemView(APIView):
     def post(request, iid):
         try:
             user = User.objects.get(id=iid)
-        except ContestOrganizer.DoesNotExist:
+        except Organizer.DoesNotExist:
             raise Http404
         name = request.data['name']
         message = request.data['message']
