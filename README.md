@@ -1,3 +1,5 @@
+❗此版本前端为 vue3 版本，完整项目参见：<https://gitee.com/fmw666/ojSys/tree/master>
+
 # 敲哈儿码都（kk-code） 💫
 
 > 本篇内容：介绍本项目主要内容，并将指导您完成对项目的启动
